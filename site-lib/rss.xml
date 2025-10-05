@@ -1,1 +1,177 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vault]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>site-lib/media/favicon.png</url><title>Vault</title><link></link></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Fri, 03 Oct 2025 12:32:14 GMT</lastBuildDate><atom:link href="site-lib/rss.xml" rel="self" type="application/rss+xml"/><pubDate>Fri, 03 Oct 2025 12:32:14 GMT</pubDate><ttl>60</ttl><dc:creator></dc:creator></channel></rss>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Vault]]></title><description><![CDATA[Obsidian digital garden]]></description><link>http://github.com/dylang/node-rss</link><image><url>site-lib/media/favicon.png</url><title>Vault</title><link/></image><generator>Webpage HTML Export plugin for Obsidian</generator><lastBuildDate>Sun, 05 Oct 2025 10:02:26 GMT</lastBuildDate><atom:link href="site-lib/rss.xml" rel="self" type="application/rss+xml"/><pubDate>Sun, 05 Oct 2025 10:02:24 GMT</pubDate><ttl>60</ttl><dc:creator/><item><title><![CDATA[MapReduce]]></title><description><![CDATA[
+Summarization Count Min
+Max
+Sum Filtering Sampling, TopN Data Organization
+Join Patterns
+Graph Algorithms
+Machine Learning KNN
+Naive Bayes Example: Join Two Datasets:// Users dataset // Orders dataset user1, Alice, 25 order1, user1, laptop, 1000 user2, Bob, 30 order2, user2, phone, 500 order3, user1, tablet, 300
+// Tag each record with source map(users): emit(userId, ("U", name, age)) map(orders): emit(userId, ("O", orderId, product, price))
+By doing this, the mapper ensures that for a given&nbsp;userId&nbsp;(e.g.,&nbsp;user1), the reducer will receive a list of values like&nbsp;[("U", "Alice", 25), ("O", "order1", "laptop", 1000), ("O", "order3", "tablet", 300)]. The reducer can then easily iterate through this list, identify the user information by its "U" tag, identify the order information by its "O" tag, and perform the join.
+user1,&nbsp;("U", "Alice", 25)
+user2,&nbsp;("U", "Bob", 30) user1,&nbsp;("O", "order1", "laptop", 1000)
+user2,&nbsp;("O", "order2", "phone", 500)
+user1,&nbsp;("O", "order3", "tablet", 300)
+The Map-reduce framework will then take this full list of key-value pairs, sort them by key, and group the values for each key. This grouped data is what gets sent to the Reducer:
+Key:&nbsp;user1
+Values:&nbsp;[("U", "Alice", 25), ("O", "order1", "laptop", 1000), ("O", "order3", "tablet", 300)] Key:&nbsp;user2
+Values:&nbsp;[("U", "Bob", 30), ("O", "order2", "phone", 500)] This grouped output is the direct input for the&nbsp;reduce&nbsp;function described in your note.reduce(userId, values): userInfo = null orders = [] for value in values: if value.tag == "U": userInfo = value else: orders.append(value) for order in orders: emit(userId, userInfo + order) (user1, (Alice, 25, order1, laptop, 1000))
+(user1, (Alice, 25, order3, tablet, 300))
+(user2, (Bob, 30, order2, phone, 500))
+Example on total orders form Users
+reduce(userId, values) {
+total = 0;
+for value in values { if value.tag = "O"; total += value.orderValue;
+} emit(userId, total)
+} public class MapSideJoinMapper extends Mapper&lt;...&gt; { private HashMap userMap = new HashMap&lt;&gt;(); @Override protected void setup(Context context) { // Load small dataset into memory Path[] cacheFiles = context.getLocalCacheFiles(); BufferedReader reader = new BufferedReader( new FileReader(cacheFiles[0].toString())); String line; while ((line = reader.readLine()) != null) { String[] parts = line.split(","); userMap.put(parts[0], parts[1] + "," + parts[2]); } } @Override public void map(LongWritable key, Text value, Context context) { // Join with in-memory data String[] order = value.toString().split(","); String userInfo = userMap.get(order[1]); if (userInfo != null) { context.write(new Text(order[1]), new Text(userInfo + "," + value)); } } }
+Mapper 1: user1: "Alice", 25, (Laptop, 1000), (tablet,300)
+Mapper 2: user1: "Alice", 25, (TV,3000)
+The reducers are then responsible for reducing these records from the map phase.
+In short the map is carrying out some of the heavy work of the reducers, grouping many orders in one record instead of single records entries. Aggregate data on the mapper side in-memory
+Avoid shuffle and sort overhead Much faster than reduce side join
+Can only be used if the data can fit in memory on the mapper side
+public class TopNMapper extends Mapper&lt;...&gt; { private TreeMap topMap = new TreeMap&lt;&gt;(); @Override public void map(Object key, Text value, Context context) { String[] tokens = value.toString().split("\t"); String word = tokens[0]; int count = Integer.parseInt(tokens[1]); topMap.put(count, word); // Keep only top 10 in mapper if (topMap.size() &gt; 10) { topMap.remove(topMap.firstKey()); } } @Override protected void cleanup(Context context) { // Emit local top 10 for (Map.Entry entry : topMap.entrySet()) { context.write(new IntWritable(entry.getKey()), new Text(entry.getValue())); } } } word: &lt;Doc, number of occurences&gt;[]
+// Mapper public void map(Text docId, Text content, Context context) { Map wordCounts = new HashMap&lt;&gt;(); for (String word : content.toString().split("\\s+")) { wordCounts.put(word, wordCounts.getOrDefault(word, 0) + 1); } for (Map.Entry entry : wordCounts.entrySet()) { context.write( new Text(entry.getKey()), new Text(docId + ":" + entry.getValue()) ); } } // Reducer public void reduce(Text word, Iterable docList, Context context) { StringBuilder postings = new StringBuilder(); for (Text doc : docList) { postings.append(doc.toString()).append(", "); } context.write(word, new Text(postings.toString())); } Input Split Size: Balance between parallelism and overhead
+Compression: Reduce I/O but consider CPU cost
+Data Locality: Schedule tasks near data
+Combine Files: Avoid small file problem Reuse Objects: Avoid creating new objects in loops
+Use Combiners: Reduce network traffic
+Filter Early: Reduce data in mappers
+Custom Partitioners: Balance reducer load
+Run a background task to run slow process and kill the slowest once you get the result. The original mapper might run close to a datanode in the same rack, yet, the network of the rack might get congested as HDFS and other processes are running, therefore running a background task might run on a different uncontested sub-network.
+Some keys have more data than others
+causes reducers to take longer tiem
+Example: "The" appears millions of times compared to other words in an inverted index Sampling data, lets you detec skewed keys
+Salting, add random suffix to skewed data You can Salt on Keys, and every key will have the same suffix
+Or you can salt on each key instance, and every key record will have different suffix custom partitioner: build your own custom partitioner than consistent hashing (risky)
+Salting Example
+// step 1: add random salt
+map(key, value): if(isSkewedKey(key)): salt= random.nextInt(10) emit(key + "_" + salt, value) else: emit(key,value)
+// aggregate the salted keys at reducer Salting Does not Produce Aggregation
+You will end up with key_&lt;salt&gt;: value entries in the final output of mapreduce
+]]></description><link>studies/big-data/mapreduce.html</link><guid isPermaLink="false">Studies/Big Data/MapReduce.md</guid><pubDate>Sun, 05 Oct 2025 09:05:23 GMT</pubDate></item><item><title><![CDATA[Assignment 1]]></title><description><![CDATA[
+800 application servers needed (based on load analysis) Each server: dual 10 Gbps network interfaces Peak aggregate bandwidth requirement: 2 Tbps
+Standard rack configuration: 25 servers per rack Redundancy requirement: no single point of failure
+Design a three-tier data center network architecture using the specifications below:
+(1) Use Top-of-Rack (ToR) switches
+(2) Each ToR switch: 48 × 1 Gbps server ports + 4 × 10 Gbps uplinks
+(3) Dual uplinks per ToR for redundancy (4) Maximum over-subscription ratio: 4:1
+(5) Each aggregation switch: 48 × 10 Gbps downlink ports + 8 × 40 Gbps uplinks (6) Each core switch: 32 × 40 Gbps ports
+(7) Full mesh connectivity between core switches Calculate the number of racks needed
+Determine the number of ToR switches required
+Calculate the number of aggregation switches needed
+Specify the number of core switches required
+Draw a labeled network topology diagram showing: All switch types and quantities
+Connection speeds between layers
+Redundancy paths Number of Racks needed: Number of ToR switches needed
+- This needs some nuance as there are some issues to be addressed:
+- Each Switch has 48 x 1 Gbps Server ports, yet the servers can support up to 10 Gbps
+- This basically means that the supplied switch would be a bottleneck as it does not meet the speed of the 10Gbps interface the server supports
+- This is worth mentioning, yet can not be remedied by a work around unless a switch with a higher speed is supplied, therefore, each server will connect TO ONE PORT on the switch.
+- Following along, each Switch can host 48 Servers, and since there is no requirement to be Port-Efficient or COST-EFFECTIVE , we should not utilize all the Switch's ports:
+- Having only one switch per rack is a single point of failure, a common design is to have two ToR switches per rack[1], therefore my final answer is: Crucial point Each server connects one of its NICs to the first ToR switch in the rack.
+The same server connects its second NIC to the second ToR switch in the rack. [1] HP DC Solutions: "Hosts are dual-homed to two top-of-rack (ToR) switches using a Virtual Switch Extension (VSX) multi-chassis link aggregation group (MC-LAG)", <a rel="noopener nofollow" class="external-link is-unresolved" href="https://arubanetworking.hpe.com/techdocs/VSG/docs/040-dc-design/esp-dc-design-020-network-design/#two-tier-overview" target="_self">https://arubanetworking.hpe.com/techdocs/VSG/docs/040-dc-design/esp-dc-design-020-network-design/#two-tier-overview</a>
+Number of Aggregation switches needed:
+- We first need to check the minimum number of Aggregation switches needed considering port capacities of ToR switches &amp; aggregation switches.
+- Each ToR Switch has 23 remaining ports, satisfying constraint (3), which needs 2 ToR uplinks for redundancy. - Each Aggregation Switch supports 48 x 10 Gbps ports, thus: Secondly, we need to check if we violate the Over-Subscription Constraint (4).
+- Over-subscription ration is basically: , The Downlink Bandwidth on the aggregation switches is (remember that servers are throttled down by the ToR switches): The Max required Uplink to maintain 4:1 is - The Uplink Capacity of One Aggregation Switch is The minimum Switches for bandwidth: We then choose the max of of the two minimums we get, 3 aggregation switches, However, this introduces 3 single point of failures, Thus we actually need: HOWEVER, The peak aggregate bandwidth requirement is 2 Tbps, Simply put: This is very close to our target, thus we simply add another aggregate switch, to reach our target: HOWEVER, 7 aggregate switches is an odd number of switches, having 8 Aggregate switches, satisfies our constraints while allowing us to divide them evenly across the racks and dividing them into to pods, or planes, for clean modular redundancy. [3]<br>[3] "POD - A unit of network, storage and compute that work together to deliver networking services. POD is a repeatable design pattern which provides scalable and easier to manage data centers.", Nvidia, <a rel="noopener nofollow" class="external-link is-unresolved" href="https://docs.nvidia.com/networking-ethernet-software/knowledge-base/Setup-and-Getting-Started/layer-1-Data-Center-Cheat-Sheet/" target="_self">https://docs.nvidia.com/networking-ethernet-software/knowledge-base/Setup-and-Getting-Started/layer-1-Data-Center-Cheat-Sheet/</a>Therefore we choose 8 Aggregation Switches<br>Do redundant switches contribute to bandwidth?
+Yes, this is Active-Active Redundancy in DC design [2] . [2] Architecture strategies for designing for redundancy, <a rel="noopener nofollow" class="external-link is-unresolved" href="https://learn.microsoft.com/en-us/azure/well-architected/reliability/redundancy" target="_self">https://learn.microsoft.com/en-us/azure/well-architected/reliability/redundancy</a> Microsoft. Core switches needed
+1. We need to check port capacity so constraint (7) is achievable. Since a coer switch has 32 x 40 Gbps ports it can accomodate 7 ports for 7 aggregation switches, however a single core switch is a single point of failure, so we address by having 2 Core switches, which will yield us 6 + 1 total ports connected.
+2. We need to satisfy the Peak Aggregate Bandwidth requirement of 2Tbps thus the core switching layer needs to have an uplink Bandwidth of 2Tbps This satisfies our requirement of 2Tbps peak aggregate Bandwidth.
+<br><img alt="NET ARCH.svg" src="studies/big-data/net-arch.svg" target="_self">Calculate the following metrics for your design:
+Total uplink capacity from access layer to aggregation layer
+Effective bandwidth after applying the 4:1 oversubscription ratio
+Bisection bandwidth of the complete network
+Power consumption assuming: Each server: 400W
+Each ToR switch: 200W
+Each aggregation switch: 800W
+Each core switch: 1200W
+PUE factor: 1.6 Bisection Bandwidth: Minimum bandwidth between any two equal halves of the network when cut along the narrowest path. min(Total Uplink Capacity ÷ Oversubscription Ratio)
+Total Uplink Capacity: Effective bandwidth after applying 4:1 Oversubscription Rule, Downlink Bandwidth is effectively therefore: Bisection Bandwidth The Narrowest cut is between the aggregation and core layers
+The bisection bandwidth is half of the total capacity of these Links
+Since we already know that our peak aggregate bandwidth is 2.56 Tbps our Bisection Bandwidth is Half of that which is 1.28 Tbps Full calculation Power Consumption: Server Power:&nbsp;
+ToR Switch Power: &nbsp;
+Aggregation Switch Power:&nbsp;
+Core Switch Power: A company has an HDFS cluster with the following specifications: 20 DataNodes, each DataNode has 10 TB storage capacity, default replication factor of 3, and a block size of 128 MB
+Total raw storage capacity
+Effective storage capacity (considering replication)
+Maximum number of blocks the cluster can store
+Memory required for NameNode if each block metadata takes 150 bytes Total Raw Storage Capacity Effective Storage Capacity, considering replication Since we are replicating by a factor of 3 and Namenode metadata/file metric is NOT DEFINED it is a simple division by 3 for raw Storage Capacity. maximum number of blocks the cluster can store Memory required for Name-node if each block, metadata takes 150 bytes Number of blocks required
+Total storage consumed (with replication)
+Minimum number of DataNodes needed to store this file
+Impact on cluster if 2 DataNodes fail simultaneously Number of Blocks required
+We need to consider replication factor of 3 thus,
+IF the question specifies the number of blocks WITHOUT replication then, the blocks of the 10GB file WITHOUT REPLICATION is: Total Storage Consumed (With replication) Minimum number of Datanodes needed to store this file
+The Minimum number of Datanodes needed to store this file is 3 Datanodes, As per HDFS Lecture Slide 11, default replication parameters for 3 factor replication. Impact on cluster if 2 Datanodes fail simultaneously: NameNode detects loss of heartbeat signals of Datanode
+A Timeout is reached and NameNode begin re-replication of Blocks on the 3rd Datanode, since we have a replication factor of 3. Performance degradation is seen, when re-replication is commenced.
+Storage Capacity Decreases as 2 Datanodes died, 20TB of Raw Storage Capacity are Lost
+Data is still Available No data is lost, before re-replication as there is still 1 intact DataNode Available as we use a replication factor of 3. Optimizes for rack-awareness (assume 4 racks with 5 nodes each) (1)
+Minimizes network traffic during writes (2)
+Ensures data availability during rack failures (3)
+Draw the block placement for the first 3 blocks of a file. Replication Factor of 3
+Switch Topology (Of A 3 Tier Design) to showcase Rack Awareness
+To satisfy these requirements for a placement strategy the Hadoop HDFS default strategy is probably best suited.
+First Replica Placemnet: The first replica of a block is placed on a DataNode in the same rack as the client writing the data. if no datanode is available a randomly chosen datanode is chosen. This satisfies requirement (1) Second Replica Placement: The second replica is placed on a datanode in the nearest different rack than the rack of the first replica. This satisfies the requirement (3) Third Replica Placement: The third replica is placed on a different DataNode within the same rack as the second replica. This satisfies the requirement (2) as we will not store it on a different rack, minimizing hop count. <br><img style="max-width:400px; " class="excalidraw-svg excalidraw-embedded-img excalidraw-canvas-immersive is-unresolved" src="blob:/c97b87b0-dee1-4670-a6a7-b260e320e1a9" filesource="Excalidraw/Assignment 1 2025-10-01 20.31.14.excalidraw.md" w="400" draggable="false" oncanvas="false" target="_self">A social media platform needs to partition user data across 100 database nodes. Users are identified by numeric IDs from 1 to 1 billion.
+Range partitioning (ID ranges)
+Hash partitioning (hash(ID) mod 100)
+Consistent hashing
+Evaluate each for: load distribution, scalability, and query performance. As per Slide 21 Lec 3
+Using consistent hashing with 3 replicas per data item: Draw a consistent hashing ring with 8 nodes
+Show the placement of keys with hashes: 15, 45, 78, 92, 130, 200, 250, 300
+Demonstrate what happens when node at position 100 fails
+<br><img style="max-width:400px; " class="excalidraw-svg excalidraw-embedded-img excalidraw-canvas-immersive is-unresolved" src="blob:/14088131-089b-4372-af37-0f30f4c6fbc3" filesource="Excalidraw/Assignment 1 2025-10-01 21.45.03.excalidraw.md" w="400" draggable="false" oncanvas="false" target="_self">Our Hash output space is 0-99 as our has function is ID mod 100
+Demonstrate what happens when node at position 100 fails: As per slide 22, in HDFS Lec 3 Failed node's keys move to next clockwise node
+Replicas automatically maintained by successor nodes
+Minimal impact on system (only affected key range) so all Id ranges that has to 0-11 will be moved to the next clockwise node.Calculate the data movement required if the company decided to expand the database cluster by an additional 30 nodesSince That Data Movement = (New Nodes / Total Nodes After) * Total DataSo 23% of data will be moved, or 230 Million records that will be moved.Q1) 16/20a.1 each rack has on ToR switch - SoT is achieved through having dual ports -1
+Server-level redundancy (dual ports) is useless if the single switch they connect to fails.
+a.2 SoT is achieved in agg switches by using only 2 of the uplinks -1
+Unclear, Redundancy at aggregate layer is achieved by having multiple physical aggregation switches, not by how many uplinks are used.
+b.2 over-subscription is controlled at the uplink speed of the ToR -1
+Unclear
+b.3 bissection is the min link speed -1
+Unclear
+Q2) 19/20a.2. max number of blocks that can be written is without replication -1
+The Namenode, metadata, is given in the question after this one, why would the given precede and apply to the questions before it.
+Q3) 8/10b.1 consistent hashing is not dependent on key values -1
+Justified, however it is was not mentioned in the lecture/I was mentally absent, that in consistent hashing, Hashes are hashed again through .Where is the hash on the ring, and is the hash of a blob or an identifier coming onto the ring.
+b.2 you need to show which data nodes move after failures -1
+Justified
+]]></description><link>studies/big-data/assignment-1.html</link><guid isPermaLink="false">Studies/Big Data/Assignment 1.md</guid><pubDate>Sun, 05 Oct 2025 09:04:30 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[Lab 1 Deliverable]]></title><link>studies/digital-forensics/lab_1/lab-1-deliverable.html</link><guid isPermaLink="false">Studies/Digital Forensics/Lab_1/Lab 1 Deliverable.pdf</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate></item><item><title><![CDATA[Lab 1 Deliverable]]></title><description><![CDATA[FAT32 Disk ImageShort entry (FIRST.DOC) (192) File name (192).........................................FIRST File extension (200)....................................DOC Attributes (203)........................................0x20 Read only (:0)......................................0 Hidden (:1).........................................0 System (:2).........................................0 Volume (:3).........................................0 Directory (:4)......................................0 Archive (:5)........................................1 (reserved) (204)........................................0 Created time refinement in 10ms (0-199) (205)...........190 Created date/time (206).................................9/17/25 7:58 AM Last access date (210)..................................9/17/25 First cluster (high word) (212).........................0 Modified date/time (214)................................9/17/25 7:58 AM First cluster (low word) (218)..........................5 File size (220).........................................29,184
+First Data Sector of File:Short entry (ONE) (320) File name (320).........................................ONE File extension (328).................................... Attributes (331)........................................0x10 Read only (:0)......................................0 Hidden (:1).........................................0 System (:2).........................................0 Volume (:3).........................................0 Directory (:4)......................................1 Archive (:5)........................................0 (reserved) (332)........................................0 Created time refinement in 10ms (0-199) (333)...........173 Created date/time (334).................................9/17/25 7:58 AM Last access date (338)..................................9/17/25 First cluster (high word) (340).........................0 Modified date/time (342)................................9/17/25 7:58 AM First cluster (low word) (346)..........................63 File size (348).........................................0
+To Jump to The File Entries of ONE Directory we need to compute it:First cluster (High word) = 0 First Cluster (Low word) = 63`Thus:LFN File Name: You could have been an influencer.doc
+Short entry (YOUCOU~1.DOC) (416) File name (416).........................................YOUCOU~1 File extension (424)....................................DOC Attributes (427)........................................0x20 Read only (:0)......................................0 Hidden (:1).........................................0 System (:2).........................................0 Volume (:3).........................................0 Directory (:4)......................................0 Archive (:5)........................................1 (reserved) (428)........................................0 Created time refinement in 10ms (0-199) (429)...........166 Created date/time (430).................................9/17/25 7:59 AM Last access date (434)..................................9/17/25 First cluster (high word) (436).........................0 Modified date/time (438)................................9/17/25 7:59 AM First cluster (low word) (442)..........................66 File size (444).........................................29,184 First Data Sector of File:
+Secret.txt is actually in the root directory
+First byte of SFN E5 Confirmed Attr @ +0x0B 0x20 file Creation tenths @ +0x0D 183 Creation time/date @ +0x0E..11 9/17/25 7:59 AM Modified time/date @ +0x16..19 9/17/23 8:01 AM
+High @ +0x14..15 ____ 0
+Low @ +0x1A..1B ____ 62
+Start cluster = (High&lt;&lt;16)|Low 62 Size (bytes) @ +0x1C..1F ____ 5
+First sector (physical) = StartLBA+FDS+(Start−2) 128 + 8192 + (62 - 2) = 8380 (Physical) 8252 (Volume Relative)
+Content:
+Sshhh
+Since it is in the root directory no need to rechain it
+At Offset 00400120 Changed E5 to 53, 'S' ASCII Now we need to mark Cluster 62 as allocated in the FATs.Cluster 62
+Byte_Offset = 4 * 62 = 248
+FAT1_Sector = 6334
+New 4 byte LE Value: FF FF FF 0F Byte_Offset = 4 * 62 = 248
+FAT2_Sector = 7263
+New 4 byte LE Value: FF FF FF 0F
+]]></description><link>studies/digital-forensics/lab_1/lab-1-deliverable.html</link><guid isPermaLink="false">Studies/Digital Forensics/Lab_1/Lab 1 Deliverable.md</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate></item><item><title><![CDATA[Lab 1 Deliverable]]></title><link>studies/digital-forensics/lab_1/lab-1-deliverable.html</link><guid isPermaLink="false">Studies/Digital Forensics/Lab_1/Lab 1 Deliverable.html</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate></item><item><title><![CDATA[Assignment 1]]></title><link>studies/digital-forensics/assignments/assignment-1.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/Assignment 1.pdf</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate></item><item><title><![CDATA[Assignment 1]]></title><description><![CDATA[Using a hex editor of your choice, view the headers of a variety of files and
+file types. Complete the table below to create your own list of “Magic Numbers”
+A lot of file types are already given in the document, so i will include some of the lesser known/not included file types.
+Sources:
+<a rel="noopener nofollow" class="external-link is-unresolved" href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_self">https://en.wikipedia.org/wiki/List_of_file_signatures</a><br>
+<a rel="noopener nofollow" class="external-link is-unresolved" href="https://file.org/extension/pgp" target="_self">https://file.org/extension/pgp</a>
+Using a hex editor of your choice, Open ‘file carving’ Consult the ‘Files Headers List.docx’ and check file signature for ‘file
+carving’, Add the correct extension to the ‘file carving’ filename and open it, Extract All hidden files in the ‘file carving’, Save each extracted file with a separate name and with the correct extension. Open each extracted file
+File Carving has the Signature FF D8 FF E0 00 10 4A 46 49 46 00 01 Which is a jpeg/jpg file, but is it only that?<br>From Wiki: <a rel="noopener nofollow" class="external-link is-unresolved" href="https://en.wikipedia.org/wiki/JPEG" target="_self">https://en.wikipedia.org/wiki/JPEG</a>;
+The End of Image JPEG Marker is 0xFFD9
+At the last Offset 0001FDF6 + 5 Bytes the marker is 0x0D So this file is not just a JPEG Image.1: Searching for 0xFFD9 we extract the real jpg image under the file name File_Carving_1.jpg2: Right after this signature there is another jpg Header starting with FF D8, Doing same procedure as in (1) we get another Image File_Carving_2.jpg:<br>
+<img alt="File_Carving_2.jpg" src="studies/digital-forensics/assignments/file_carving_2.jpg" target="_self">3: Again, immediately after the pier image we find another JPG signature, same procedure as previous we get File_Carving_3.jpg:<br>
+<img alt="File_Carving_3.jpg" src="studies/digital-forensics/assignments/file_carving_3.jpg" target="_self">4: Right After that image we find a PDF file Signature 25 50 44 46 2D, We need to know a PDF EoF marker to correctly extract it.<br>
+From: <a rel="noopener nofollow" class="external-link is-unresolved" href="https://stackoverflow.com/questions/11896858/does-the-eof-in-a-pdf-have-to-appear-within-the-last-1024-bytes-of-the-file" target="_self">https://stackoverflow.com/questions/11896858/does-the-eof-in-a-pdf-have-to-appear-within-the-last-1024-bytes-of-the-file</a>We know that the PDF EoF is %%EOF
+First %%EOF marker yields a corrupt PDF File_Carving_4.pdf, a second %%EOF Marker is found yielding an intact pdf File_Carving_5.pdf. To make sure this is correct I try to find another %PDF- Marker to see if there is another PDF present, which is not the case.To make sure there are no files left, some common file formats signatures were searched, yet received no results:ID3 mp3
+WEBP webp images
+rtf Rich Text
+ftyp mp4 file formats begin with ftyp
+Rar! rar archives all found media is given with assignment submission
+]]></description><link>studies/digital-forensics/assignments/assignment-1.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/Assignment 1.md</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[Assignment 1]]></title><link>studies/digital-forensics/assignments/assignment-1.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/Assignment 1.html</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate></item><item><title><![CDATA[File carving]]></title><description><![CDATA[<img src="studies/digital-forensics/assignments/file-carving.jpg" target="_self">]]></description><link>studies/digital-forensics/assignments/file-carving.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/File carving.jpg</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[File carving (Copy)]]></title><description><![CDATA[<img src="studies/digital-forensics/assignments/file-carving-(copy).jpg" target="_self">]]></description><link>studies/digital-forensics/assignments/file-carving-(copy).html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/File carving (Copy).jpg</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[File_Carving_1]]></title><description><![CDATA[<img src="studies/digital-forensics/assignments/file_carving_1.jpg" target="_self">]]></description><link>studies/digital-forensics/assignments/file_carving_1.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/File_Carving_1.jpg</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[File_Carving_2]]></title><description><![CDATA[<img src="studies/digital-forensics/assignments/file_carving_2.jpg" target="_self">]]></description><link>studies/digital-forensics/assignments/file_carving_2.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/File_Carving_2.jpg</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[File_Carving_3]]></title><description><![CDATA[<img src="studies/digital-forensics/assignments/file_carving_3.jpg" target="_self">]]></description><link>studies/digital-forensics/assignments/file_carving_3.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/File_Carving_3.jpg</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item><item><title><![CDATA[File_Carving_4]]></title><link>studies/digital-forensics/assignments/file_carving_4.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/File_Carving_4.pdf</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate></item><item><title><![CDATA[File_Carving_5]]></title><link>studies/digital-forensics/assignments/file_carving_5.html</link><guid isPermaLink="false">Studies/Digital Forensics/Assignments/File_Carving_5.pdf</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate></item><item><title><![CDATA[NET ARCH]]></title><description><![CDATA[<img src="studies/big-data/net-arch.svg" target="_self">]]></description><link>studies/big-data/net-arch.html</link><guid isPermaLink="false">Studies/Big Data/NET ARCH.svg</guid><pubDate>Wed, 01 Oct 2025 13:24:19 GMT</pubDate><enclosure url="." length="0" type="false"/><content:encoded>&lt;figure&gt;&lt;img src="."&gt;&lt;/figure&gt;</content:encoded></item></channel></rss>
