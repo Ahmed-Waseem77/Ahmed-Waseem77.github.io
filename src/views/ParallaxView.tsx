@@ -1,9 +1,13 @@
 import ParallaxLayer from '../components/ParallaxLayer';
+import BackgroundLayer2 from '../components/BackgroundLayer2';
+import BackgroundLayer3 from '../components/BackgroundLayer3';
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Home, Info, Layers, Zap, MousePointer2 } from 'lucide-react';
 import theme from '../theme';
+import { useTheme } from '../ThemeContext'; 
 
 const ParallaxView: React.FC = () => {
+  const { theme, toggleTheme, isDarkMode } = useTheme();
   const [scrollTop, setScrollTop] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -33,22 +37,13 @@ const ParallaxView: React.FC = () => {
 
       {/* --- BACKGROUND LAYER 2 (Distant Shapes) --- */}
       <ParallaxLayer speed={0.2} offset={scrollTop} className="pointer-events-none top-20">
-        <div className={`absolute top-10 right-10 w-64 h-64 ${theme.shapes.primary} rounded-full blur-[100px] border-0`} />
-        <div className={`absolute top-[800px] left-[-100px] w-96 h-96 ${theme.shapes.secondary} rounded-full blur-[120px]`} />
-        <div className={`absolute top-[1600px] right-20 w-80 h-80 ${theme.shapes.tertiary} rounded-full blur-[100px] border-0`} />
+      	<BackgroundLayer2 />
       </ParallaxLayer>
 
       {/* --- BACKGROUND LAYER 3 (Mid-distance Elements) --- */}
       <ParallaxLayer speed={0.5} offset={scrollTop} className="pointer-events-none top-40">
-        <div className="container mx-auto px-6 relative h-[2000px] opacity-30">
-          <div className={`absolute top-32 left-10 text-9xl font-black ${theme.colors.textDark} select-none`}>DEPTH</div>
-          <div className={`absolute top-[600px] right-10 text-9xl font-black ${theme.colors.textDark} select-none`}>SCROLL</div>
-          <div className={`absolute top-[1200px] left-32 text-9xl font-black ${theme.colors.textDark} select-none`}>MOTION</div>
+      	<BackgroundLayer3 />
           
-          {/* Decorative Grid Lines */}
-          <div className="absolute top-0 right-1/4 w-px h-full bg-slate-800/50" />
-          <div className="absolute top-0 left-1/4 w-px h-full bg-slate-800/50" />
-        </div>
       </ParallaxLayer>
 
       {/* --- FOREGROUND LAYER 1 (Fast Elements) --- */}

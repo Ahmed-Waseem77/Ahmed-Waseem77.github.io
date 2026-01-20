@@ -1,6 +1,9 @@
 import theme from '../theme';
+import { useTheme } from '../ThemeContext'; 
 
-const StandardPage: React.FC = () => (
+const StandardPage: React.FC = () => {
+  const { theme, toggleTheme, isDarkMode } = useTheme();
+  return (
   <div className={`w-full min-h-full ${theme.colors.bgStandard} overflow-y-auto pt-20`}>
     <div className="container mx-auto px-6 max-w-2xl pb-20">
       <h1 className={`text-4xl font-bold ${theme.colors.textPrimary} mb-6`}>About Page</h1>
@@ -22,5 +25,6 @@ const StandardPage: React.FC = () => (
     </div>
   </div>
 );
+}
 
 export default StandardPage;

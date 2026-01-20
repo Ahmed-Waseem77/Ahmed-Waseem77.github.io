@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X, Home, Info, Layers, Zap, MousePointer2 } from 'lucide-react';
+import { ThemeProvider } from './ThemeContext';
 import Navigation from './components/Navigation';
 import ParallaxView from './views/ParallaxView';
 import StandardPage from './views/StandardPage';
@@ -10,6 +11,7 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   return (
+    <ThemeProvider>
     <div className={`flex flex-col h-screen w-full ${theme.colors.bgMain} ${theme.colors.textHighlight} font-sans selection:bg-emerald-500/30`}>
       <Navigation 
         activePage={activePage} 
@@ -47,5 +49,6 @@ export default function App() {
         }
       `}</style>
     </div>
+    </ThemeProvider>
   );
 }
