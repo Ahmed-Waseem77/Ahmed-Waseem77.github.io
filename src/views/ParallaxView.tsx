@@ -1,6 +1,7 @@
 import ParallaxLayer from '../components/ParallaxLayer';
 import BackgroundLayer2 from '../components/BackgroundLayer2';
 import BackgroundLayer3 from '../components/BackgroundLayer3';
+import DynamicBackground from '../components/DynamicBackground';
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, Home, Info, Layers, Zap, MousePointer2 } from 'lucide-react';
 import theme from '../theme';
@@ -33,16 +34,21 @@ const ParallaxView: React.FC = () => {
     <div className={`relative w-full h-[100dvh] ${theme.colors.bgMain} overflow-hidden`}>
       
       {/* --- BACKGROUND LAYER 1 (Deepest) --- */}
-      <div className={`absolute inset-0 ${theme.colors.gradientMain} z-0 pointer-events-none`} />
+      <DynamicBackground scrollTop={scrollTop}/>
 
       {/* --- BACKGROUND LAYER 2 (Distant Shapes) --- */}
+
       <ParallaxLayer speed={0.2} offset={scrollTop} className="pointer-events-none top-20">
-      	<BackgroundLayer2 />
+      	<div className="w-[100vw] h-[1000px]">
+      	</div>
+      	<BackgroundLayer2 scrollTop={scrollTop}/>
       </ParallaxLayer>
 
       {/* --- BACKGROUND LAYER 3 (Mid-distance Elements) --- */}
       <ParallaxLayer speed={0.5} offset={scrollTop} className="pointer-events-none top-40">
-      	<BackgroundLayer3 />
+      	<div className="w-[100vw] h-[100px]">
+      	</div>
+      	<BackgroundLayer3 scrollTop={scrollTop}/>
           
       </ParallaxLayer>
 
@@ -73,7 +79,7 @@ const ParallaxView: React.FC = () => {
       >
         <div className="min-h-[250vh] w-full pt-32 pb-32">
           
-          <main className="container mx-auto px-6 max-w-4xl">
+          <main className="container mx-auto px-6 max-w-6xl">
             {/* Header Section */}
             <section className="mb-48 relative">
               <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-6 border ${theme.badges.primary}`}>
@@ -81,9 +87,9 @@ const ParallaxView: React.FC = () => {
                 <span>Interactive Demo</span>
               </div>
               <h1 className={`text-6xl md:text-8xl font-bold ${theme.colors.textPrimary} mb-6 leading-tight`}>
-                Parallax <br />
+                of Ancient<br />
                 <span className={theme.colors.textGradient}>
-                  Scrolling
+                  Religion
                 </span>
               </h1>
               <p className={`text-xl ${theme.colors.textSecondary} max-w-2xl leading-relaxed`}>

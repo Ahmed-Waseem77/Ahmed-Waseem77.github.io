@@ -2,13 +2,33 @@ import React, { useMemo } from 'react';
 import { generateStars } from '../utils';
 import './BackgroundLayerCommon.css';
 
-const BackgroundLayer2 = () => {
+interface BackgroundLayerProps {
+  scrollTop: number; // Pass the current scroll position here
+}
+
+const BackgroundLayer2 = ({scrollTop}) => {
     const layer1 = useMemo(() => generateStars(750), []);
     const layer2 = useMemo(() => generateStars(750), []);
     const layer3 = useMemo(() => generateStars(750), []);
 
+    // --- OPACITY CALCULATION ---
+    // The stars will be fully visible at 0px.
+    // They will be fully invisible (transparent) by 800px.
+    // Adjust '800' to make them fade faster (lower number) or slower (higher number).
+    const fadeDistance = 5000;
+    const opacity = Math.max(0, 1 - scrollTop / fadeDistance);
+
+    // Performance Optimization: If invisible, don't render anything
+    if (opacity === 0) return null;
+
     return (
-        <div className="absolute inset-0 pointer-events-none">
+	<>
+        <div className="absolute inset-0 pointer-events-none"
+	     style={{ 
+		     opacity: opacity,
+		     top: -2300
+	   	    }}
+	>
             {/* Layer 1: Fast twinkle */}
             <div 
                 className="animate-twinkle absolute top-0 left-0 w-[1px] h-[1px] rounded-full"
@@ -38,6 +58,7 @@ const BackgroundLayer2 = () => {
                 }}
             />
         </div>
+	</>
     );
 }
 
