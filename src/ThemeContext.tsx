@@ -1,31 +1,62 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { lightTheme, darkTheme, type ThemeType } from './theme';
+import { 
+  tokyoDay, 
+  tokyoDark, 
+  gruvboxLight, 
+  gruvboxDark, 
+  type ThemeType 
+} from './theme';
+
+export type ThemeKey = 'tokyo-day' | 'tokyo-dark' | 'gruvbox-light' | 'gruvbox-dark';
+
+const themes: Record<ThemeKey, ThemeType> = {
+  'tokyo-day': tokyoDay,
+  'tokyo-dark': tokyoDark,
+  'gruvbox-light': gruvboxLight,
+  'gruvbox-dark': gruvboxDark,
+};
+
+// 1. Define the counterparts
+const themeCounterparts: Record<ThemeKey, ThemeKey> = {
+  'tokyo-day': 'tokyo-dark',
+  'tokyo-dark': 'tokyo-day',
+  'gruvbox-light': 'gruvbox-dark',
+  'gruvbox-dark': 'gruvbox-light',
+};
 
 interface ThemeContextType {
   theme: ThemeType;
-  isDarkMode: boolean;
-  toggleTheme: () => void;
+  themeKey: ThemeKey;
+  setTheme: (key: ThemeKey) => void;
+  toggleTheme: () => void; 
+  isDarkMode: boolean; 
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(true); // default 
+  const [themeKey, setThemeKey] = useState<ThemeKey>('gruvbox-dark'); // default theme
 
-  const toggleTheme = () => {
-    setIsDarkMode((prev) => !prev);
+  const setTheme = (key: ThemeKey) => {
+    setThemeKey(key);
   };
 
-  const theme = isDarkMode ? darkTheme : lightTheme;
+  // 2. Implement the toggle logic
+  const toggleTheme = () => {
+    setThemeKey((prevKey) => themeCounterparts[prevKey]);
+  };
+
+  const theme = themes[themeKey];
+  
+  const isDarkMode = themeKey.includes('dark');
 
   return (
-    <ThemeContext.Provider value={{ theme, isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, themeKey, setTheme, toggleTheme, isDarkMode }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
-// Custom Hook for easy access
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {

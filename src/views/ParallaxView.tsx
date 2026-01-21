@@ -39,8 +39,6 @@ const ParallaxView: React.FC = () => {
       {/* --- BACKGROUND LAYER 2 (Distant Shapes) --- */}
 
       <ParallaxLayer speed={0.2} offset={scrollTop} className="pointer-events-none top-20">
-      	<div className="w-[100vw] h-[1000px]">
-      	</div>
       	<BackgroundLayer2 scrollTop={scrollTop}/>
       </ParallaxLayer>
 
@@ -72,12 +70,12 @@ const ParallaxView: React.FC = () => {
       {/* --- MAIN CONTENT SCROLLER --- */}
       <div 
         ref={containerRef}
-        className="absolute inset-0 overflow-y-auto overflow-x-hidden z-20 scroll-smooth custom-scrollbar"
+        className="absolute inset-0 overflow-y-auto overflow-x-hidden z-20 scroll-smooth custom-scrollbar snap-y snap-mandatory"
         style={{ 
           zIndex: 1
         }}
       >
-        <div className="min-h-[250vh] w-full pt-32 pb-32">
+        <div className="snap-start min-h-[250vh] w-full pt-32 pb-32">
           
           <main className="container mx-auto px-6 max-w-6xl">
             {/* Header Section */}
@@ -109,7 +107,7 @@ const ParallaxView: React.FC = () => {
                 </p>
               </div>
 
-              <div className={`${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverTertiary} ml-12`}>
+              <div className={`${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverTertiary}`}>
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${theme.badges.iconContainerTertiary}`}>
                   <MousePointer2 className="w-6 h-6" />
                 </div>
@@ -119,7 +117,7 @@ const ParallaxView: React.FC = () => {
                 </p>
               </div>
 
-              <div className={`${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary} mr-12`}>
+              <div className={`${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${theme.badges.iconContainerPrimary}`}>
                   <Zap className="w-6 h-6" />
                 </div>
