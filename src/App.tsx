@@ -12,7 +12,8 @@ export default function App() {
 
   return (
     <ThemeProvider>
-    <div className={`flex flex-col h-screen w-full ${theme.colors.bgMain} ${theme.colors.textHighlight} font-sans selection:bg-emerald-500/30`}>
+    <div className={`flex flex-col h-screen w-full ${theme.colors.bgMain} ${theme.colors.textHighlight} font-sans selection:bg-emerald-500/30`}
+      style={{ fontFamily: '"Inria Serif", serif' }}>
       <Navigation 
         activePage={activePage} 
         setActivePage={setActivePage}

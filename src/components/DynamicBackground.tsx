@@ -10,8 +10,8 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({ scrollTop }) => {
   const { theme } = useTheme();
 
   const colorKeys: (keyof ThemeType['hex'])[] = [
-    'bgStandard',       
-    'bgMain',   
+    'bgMain',       
+    'bgStandard',   
     'borderSubtle', 
     'bgMain'        
   ];
@@ -24,7 +24,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({ scrollTop }) => {
     return { gradientString: gradient, bgHeightPercent: height };
   }, [theme]); 
 
-  const CYCLE_HEIGHT = 5000; 
+  const CYCLE_HEIGHT = colorKeys.len * 2000; 
   const scrollProgress = Math.min(100, Math.max(0, (scrollTop / CYCLE_HEIGHT) * 100));
 
   return (

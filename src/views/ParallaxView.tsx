@@ -2,16 +2,28 @@ import ParallaxLayer from '../components/ParallaxLayer';
 import BackgroundLayer2 from '../components/BackgroundLayer2';
 import BackgroundLayer3 from '../components/BackgroundLayer3';
 import DynamicBackground from '../components/DynamicBackground';
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X, Home, Info, Layers, Zap, MousePointer2 } from 'lucide-react';
-import theme from '../theme';
+import { Zap, MousePointer2, BadgeQuestionMark } from 'lucide-react';
+
 import { useTheme } from '../ThemeContext'; 
+import FadingGrid from '../components/FadingGrid';
 
 const ParallaxView: React.FC = () => {
-  const { theme, toggleTheme, isDarkMode } = useTheme();
+  const { theme } = useTheme();
+  
+  // 1. Scroll State
   const [scrollTop, setScrollTop] = useState<number>(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // 2. Active Slide State
+  const [activeSlide, setActiveSlide] = useState<number>(0);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // 3. Section Refs
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+
+  // --- EFFECT 1: SCROLL LISTENER ---
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef.current) {
@@ -30,109 +42,148 @@ const ParallaxView: React.FC = () => {
     }
   }, []);
 
+  // --- EFFECT 2: INTERSECTION OBSERVER ---
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = Number(entry.target.getAttribute('data-index'));
+          setActiveSlide(index);
+        }
+      });
+    }, {
+      threshold: 0.5,
+    });
+
+    sectionRefs.current.forEach((section) => {
+      if (section) observer.observe(section);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // FIXED: Changed 'z-100' (invalid) to 'z-30' (valid) to ensure content sits on top
+  const slideClass = "h-[100dvh] w-full snap-center flex flex-col justify-center relative z-30 items-center p-6";
+
   return (
     <div className={`relative w-full h-[100dvh] ${theme.colors.bgMain} overflow-hidden`}>
       
-      {/* --- BACKGROUND LAYER 1 (Deepest) --- */}
+      {/* --- BACKGROUND LAYERS (Z-0) --- */}
+      {/* We keep these at z-0 or z-auto so they stay behind the content scroller */}
       <DynamicBackground scrollTop={scrollTop}/>
 
-      {/* --- BACKGROUND LAYER 2 (Distant Shapes) --- */}
-
-      <ParallaxLayer speed={0.2} offset={scrollTop} className="pointer-events-none top-20">
-      	<BackgroundLayer2 scrollTop={scrollTop}/>
+      <ParallaxLayer speed={0.2} offset={scrollTop} className="pointer-events-none z-0 top-20">
+          <BackgroundLayer2 isVisible={activeSlide === 3}/>
       </ParallaxLayer>
 
-      {/* --- BACKGROUND LAYER 3 (Mid-distance Elements) --- */}
-      <ParallaxLayer speed={0.5} offset={scrollTop} className="pointer-events-none top-40">
-      	<div className="w-[100vw] h-[100px]">
-      	</div>
-      	<BackgroundLayer3 scrollTop={scrollTop}/>
-          
+      <ParallaxLayer speed={0.5} offset={scrollTop} className="pointer-events-none z-0 top-40">
+          <BackgroundLayer3 isVisible={activeSlide === 3}/>
       </ParallaxLayer>
 
-      {/* --- FOREGROUND LAYER 1 (Fast Elements) --- */}
-      <ParallaxLayer speed={1.2} offset={scrollTop} className="pointer-events-none z-40 top-60">
-        <div className="container mx-auto relative h-[2000px]">
-          <div className={`absolute top-[400px] right-[10%] w-24 h-24 border-4 rounded-xl rotate-12 backdrop-blur-sm ${theme.shapes.primary} bg-transparent`} />
-          <div className={`absolute top-[1100px] left-[5%] w-16 h-16 rotate-45 ${theme.shapes.secondary}`} />
-          <div className={`absolute top-[1800px] right-[20%] w-32 h-32 border-2 rounded-full ${theme.shapes.tertiary} bg-transparent`} />
-        </div>
+      <ParallaxLayer speed={1.2} offset={scrollTop} className="pointer-events-none z-0 top-60">
+        {/* Foreground Layer Content */}
       </ParallaxLayer>
 
-       {/* --- FOREGROUND LAYER 2 (Very Close Elements) --- */}
-      <ParallaxLayer speed={1.5} offset={scrollTop} className="pointer-events-none z-50 top-80">
-         <div className="container mx-auto relative h-[2000px]">
-           <div className="absolute top-[700px] left-0 w-8 h-32 bg-gradient-to-b from-transparent via-emerald-400/20 to-transparent blur-sm" />
-           <div className="absolute top-[1400px] right-0 w-8 h-48 bg-gradient-to-b from-transparent via-pink-400/20 to-transparent blur-sm" />
-         </div>
-      </ParallaxLayer>
-
-      {/* --- MAIN CONTENT SCROLLER --- */}
+      {/* --- MAIN CONTENT SCROLLER (Z-10) --- */}
       <div 
         ref={containerRef}
-        className="absolute inset-0 overflow-y-auto overflow-x-hidden z-20 scroll-smooth custom-scrollbar snap-y snap-mandatory"
-        style={{ 
-          zIndex: 1
-        }}
+        // FIXED: Added z-10 class explicitly. 
+        // snap-mandatory ensures rigid "slideshow" feel.
+        className="absolute inset-0 overflow-y-auto overflow-x-hidden z-10 scroll-smooth custom-scrollbar snap-y snap-mandatory"
       >
-        <div className="snap-start min-h-[250vh] w-full pt-32 pb-32">
-          
-          <main className="container mx-auto px-6 max-w-6xl">
-            {/* Header Section */}
-            <section className="mb-48 relative">
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-6 border ${theme.badges.primary}`}>
-                <Zap className="w-4 h-4" />
-                <span>Interactive Demo</span>
-              </div>
-              <h1 className={`text-6xl md:text-8xl font-bold ${theme.colors.textPrimary} mb-6 leading-tight`}>
-                of Ancient<br />
-                <span className={theme.colors.textGradient}>
-                  Religion
-                </span>
-              </h1>
-              <p className={`text-xl ${theme.colors.textSecondary} max-w-2xl leading-relaxed`}>
-                Scroll down to observe the multi-layer depth effect. Background elements move slower than this text, while foreground elements move faster.
-              </p>
-            </section>
-
-            {/* Content Cards */}
-            <section className="space-y-32">
-              <div className={`${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${theme.badges.iconContainerSecondary}`}>
-                  <Layers className="w-6 h-6" />
+        
+        <FadingGrid />
+        {/* --- SLIDE 0: HERO / TITLE --- */}
+        <section 
+            className={slideClass}
+            data-index="0"
+            ref={el => (sectionRefs.current[0] = el)}
+        >
+            <div className="container mx-auto px-6 max-w-6xl text-center md:text-left">
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-6 border ${theme.badges.primary}`}>
+                  <Zap className="w-4 h-4" />
+                  <span>Digital Tourguide Experience</span>
                 </div>
-                <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} mb-4`}>Layered Architecture</h2>
-                <p className={`${theme.colors.textSecondary} leading-relaxed`}>
-                  This card sits on the standard content plane (Speed 1.0). The massive text "DEPTH" behind it is moving at Speed 0.5, creating the illusion that it is far behind the content. The small floating squares are moving at Speed 1.2, making them appear closer to you.
+                <h1 className={`text-6xl md:text-8xl font-bold ${theme.colors.textPrimary} mb-6 leading-tight`}>
+                  Ancient<br />
+                  <span className={theme.colors.textGradient}>
+                    Art & Architecture
+                  </span>
+                </h1>
+                <p className={`text-xl ${theme.colors.textSecondary} max-w-2xl leading-relaxed mb-12`}>
+                  A journey through Ancient Egypt Art & Architecture across the ancient pharaonic and greco-roman eras.
+                </p>
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
+                    <MousePointer2 className={`w-6 h-6 ${theme.colors.textMuted}`} />
+                </div>
+            </div>
+            <div className="container mx-auto px-6 max-w-6xl">
+              <div className={`w-full p-8 md:p-12 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+                <span className="inline-flex items-center mb-6">
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${theme.badges.iconContainerSecondary}`}>
+                      <BadgeQuestionMark className="w-6 h-6" />
+                    </div>
+                    <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} ml-4`}>Digital Tourguide?</h2>
+                </span>
+                <p className={`${theme.colors.textSecondary} text-lg leading-relaxed`}>
+                    This digital tour guide is designed for a wide audience, including university
+                    students, tourists without access to professional tour guides, and visitors who
+                    participated in guided tours but found the pace or explanations overwhelming.
                 </p>
               </div>
+            </div>
+        </section>
 
-              <div className={`${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverTertiary}`}>
+
+        {/* --- SLIDE 2: RESPONSIVE EVENTS --- */}
+        <section 
+            className={slideClass}
+            data-index="2"
+            ref={el => (sectionRefs.current[2] = el)}
+        >
+            <div className="container mx-auto px-6 max-w-6xl">
+              <div className={`w-full p-8 md:p-12 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverTertiary}`}>
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${theme.badges.iconContainerTertiary}`}>
                   <MousePointer2 className="w-6 h-6" />
                 </div>
                 <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} mb-4`}>Responsive Events</h2>
-                <p className={`${theme.colors.textSecondary} leading-relaxed`}>
-                  The scroll position is tracked via a reference hook and updated using `requestAnimationFrame` for buttery smooth performance (60fps). React state updates the `translateY` CSS property of the background layers instantly.
+                <p className={`${theme.colors.textSecondary} text-lg leading-relaxed`}>
+                  The scroll position is tracked via a reference hook and updated using `requestAnimationFrame` for buttery smooth performance.
                 </p>
               </div>
+            </div>
+        </section>
 
-              <div className={`${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+        {/* --- SLIDE 3: PERFORMANCE FIRST --- */}
+        <section 
+            className={slideClass}
+            data-index="3"
+            ref={el => (sectionRefs.current[3] = el)}
+        >
+            <div className="container mx-auto px-6 max-w-6xl">
+              {/* FIXED: Removed solid background variable, added bg-black/40 for glass effect */}
+              <div className={`
+                 backdrop-blur-md 
+                 w-full p-8 md:p-12 
+		 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} 
+                 ${theme.cards.hoverPrimary}
+              `}>
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${theme.badges.iconContainerPrimary}`}>
                   <Zap className="w-6 h-6" />
                 </div>
                 <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} mb-4`}>Performance First</h2>
-                <p className={`${theme.colors.textSecondary} leading-relaxed`}>
-                  Using CSS transforms (translate3d or translateY) ensures that repaints are minimized. The browser compositor handles the movement of layers, keeping the main thread free for interaction logic.
+                <p className={`${theme.colors.textSecondary} text-lg leading-relaxed`}>
+                  Using CSS transforms (translate3d or translateY) ensures that repaints are minimized. The browser compositor handles the movement of layers.
                 </p>
               </div>
+            </div>
+        </section>
 
-               <div className="h-64 flex items-center justify-center">
-                  <p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
-               </div>
-            </section>
-          </main>
-        </div>
+        {/* --- SPACERS --- */}
+        <section className={`${slideClass} h-[50vh]`} data-index="4" ref={el => (sectionRefs.current[4] = el)}>
+           <p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
+        </section>
+
       </div>
     </div>
   );
