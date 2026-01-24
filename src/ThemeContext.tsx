@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { 
   tokyoDay, 
@@ -35,7 +36,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [themeKey, setThemeKey] = useState<ThemeKey>('tokyo-dark'); // default theme
+  const [themeKey, setThemeKey] = useState<ThemeKey>('gruvbox-dark'); // default theme
 
   const setTheme = (key: ThemeKey) => {
     setThemeKey(key);

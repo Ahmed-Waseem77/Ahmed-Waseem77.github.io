@@ -1,6 +1,14 @@
+import React, { ReactNode } from 'react';
+
 /**
  * ParallaxLayer Component
  */
+interface ParallaxLayerProps {
+  speed: number;
+  offset: number;
+  children?: React.ReactNode;
+  className?: string;
+}
 const ParallaxLayer: React.FC<ParallaxLayerProps> = ({ speed, offset, children, className = "" }) => {
   return (
     <div 

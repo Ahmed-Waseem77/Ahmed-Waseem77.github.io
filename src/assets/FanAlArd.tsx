@@ -1,4 +1,6 @@
+// @ts-ignore
 import * as React from "react"
+// @ts-ignore
 import { SVGProps } from "react"
 const FanAlArd = (props: SVGProps<SVGSVGElement>) => (
   <svg

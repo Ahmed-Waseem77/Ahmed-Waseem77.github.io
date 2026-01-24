@@ -3,6 +3,13 @@ import { useTheme } from '../ThemeContext';
 import FanAlArd from '../assets/FanAlArd';
 import AncientEgyptSwatches from './AncientEgyptSwatches';
 
+interface NavigationProps {
+  activePage: any;
+  setActivePage: (page: any) => void;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
+}
+
 const Navigation: React.FC<NavigationProps> = ({ activePage, setActivePage, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   // 1. Get the dynamic theme object and toggle function
   const { theme, toggleTheme, isDarkMode } = useTheme();

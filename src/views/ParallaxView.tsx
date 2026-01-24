@@ -3,25 +3,82 @@ import BackgroundLayer2 from '../components/BackgroundLayer2';
 import BackgroundLayer3 from '../components/BackgroundLayer3';
 import DynamicBackground from '../components/DynamicBackground';
 import TimelineMagnifier from '../components/TimelineMagnifier';
+import Carousel3D from '../components/3DCarousel';
+import FanAlArd from '../assets/FanAlArd';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Zap, Scroll, ChevronDown, Hourglass, BadgeQuestionMark } from 'lucide-react';
+import { getAssetUrl } from '../utils'
 
 import { useTheme } from '../ThemeContext'; 
 import FadingGrid from '../components/FadingGrid';
 
+const ERA_DATA: Record<number, { title: string; description: string; slides: any[] }> = {
+    0: {
+        title: "Old Kingdom",
+        description: "The age of the great pyramids and the establishment of pharaonic traditions. The capital was Memphis and the old Kingdom rule Lasted around 500 years.",
+        slides: [
+    		{ id: 'ok-1', src: getAssetUrl('Saqqara.jpg'), tip: "Saqqara Pyramid (FanAlArd, 2026)" },
+		{ id: 'ok-2', src: getAssetUrl('GizaMenkawra.jpg'), tip: "Giza Menkawra Pyramid and Pyramids of the Queens (FanAlArd, 2026)" },
+    		{ id: 'ok-3', src: getAssetUrl('GizaKhafrae.jpg'), tip: "Giza Khafrae Pyramid (FanAlArd, 2026)" },
+        ]
+    },
+    1: {
+	    title:"Middle Kingdom",
+	    description: "The Second Golden Age of Ancient Egypt, with the capital being Thebes.",
+	    slides: [
+		{id: 'mk-1', src: getAssetUrl('tombsOfBeniHassan.jpg'), tip: "Exterior view of tombs of Khety and Baqet III, 28 km south of Minya, Egypt (Markh, English Wikipedia, 2005)"},
+		{id: 'mk-2', src: getAssetUrl('AbydosFacade.jpg'), tip: "Façade, Temple of Seti I, Abydos, Egypt (Roland Unger, English Wikipedia, 2000)"}
+	    ]
+    },
+    2: {
+        title: "New Kingdom",
+        description: "The golden age of empire, Tutankhamun, and Ramses the Great.",
+        slides: [
+    { id: 'nk-1', src: getAssetUrl('ValleyNobles.jpg'), tip: "Ancient Egypt" },
+    { id: 'nk-2', src: getAssetUrl('ValleyNobles2.jpg'), tip: "The Golden Age" },
+    { id: 'nk-3', src: getAssetUrl('ValleyNoblesRelief1.jpg'), tip: "Modern Era" },
+        ]
+    },
+    3: {
+	title: "Persian",
+	description: "A short ~200 Years rule of the Persian empire over Egypt. There was not much of a cultural exchange that happened, and Egypt under Persian rule was more of a colony",
+	slides: [
+            { id: 'pr-1', src: getAssetUrl('PersianEgypt.jpg'), tip: "Egypt in the First Persian Empire, (Ancient Egypt Online, Retrieved Jan 2026)" },
+	]
+    },
+    4: {
+        title: "Greco-Roman",
+        description: "The fusion of Egyptian traditions with Greek and Roman artistry.",
+        slides: [
+            { id: 'gr-1', src: getAssetUrl('PtolemaicKing.jpg'), tip: "A Ptolemaic King depicted as an Egyptian Pharaoh, Egyptian Museum of Antiquities (FanAlArd, 2026)" },
+            { id: 'gr-2', src: getAssetUrl('KomAlDikka.jpg'), tip: "KomAlDikka, Alexandria (FanAlArd, 2026)" },
+            { id: 'gr-3', src: getAssetUrl('QaitBayEntrance.jpg'), tip: "Entrance of Qaitbay, which was once the great lighthouse of Alexandria, (FanAlArd, 2026)" },
+        ]
+    },
+};
+
 const ParallaxView: React.FC = () => {
-  const { theme } = useTheme();
-  
+  const { theme, setTheme } = useTheme();
+
+  const [selectedEraIndex, setSelectedEraIndex] = useState<number>(0);
+  const eras = ["Old Kingdom 2700 BCE - 2200 BCE", "Middle Kingdom 2000 BCE - 1700 BCE", "New Kingdom 1500 BCE - 1000 BCE", "Persian 525 BCE - 404 BCE" ,"Greco-Roman (Ptolemaic) 235 BCE - 642 BCE" ];
+  const currentData = ERA_DATA[selectedEraIndex] || ERA_DATA[0]; 
+
   // 1. Scroll State
   const [scrollTop, setScrollTop] = useState<number>(0);
   
   // 2. Active Slide State
   const [activeSlide, setActiveSlide] = useState<number>(0);
+useEffect(() => {
+    // Assuming "3rd section" is the one with data-index="3" (Ancient Egyptian Religion)
+    if (activeSlide === 3) {
+      setTheme('tokyo-dark'); // Or 'tokyo-day' / 'gruvbox-light' based on preference
+    } else {
+      setTheme('gruvbox-dark'); // Revert to your default base theme when leaving that section
+    }
+  }, [activeSlide, setTheme]);
 
-  // 3. Timeline Slider State 
-  const [selectedEraIndex, setSelectedEraIndex] = useState<number>(0);
-  const eras = ["Old Kingdom", "New Kingdom", "Greco-Roman"];
 
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -102,7 +159,7 @@ const ParallaxView: React.FC = () => {
         <section 
             className={slideClass}
             data-index="0"
-            ref={el => (sectionRefs.current[0] = el)}
+            ref={el => {sectionRefs.current[0] = el}}
         >
             <div className="container mx-auto px-6 max-w-6xl text-center md:text-left">
                 <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium mb-6 border ${theme.badges.primary}`}>
@@ -110,7 +167,16 @@ const ParallaxView: React.FC = () => {
                   <span>Digital Tourguide Experience</span>
                 </div>
                 <h1 className={`text-6xl md:text-8xl font-bold ${theme.colors.textPrimary} mb-6 leading-tight`}>
-                  Ancient<br />
+		<span className={`inline-flex items-end w-full items-end`}>
+                  Ancient Egypt's
+		  <div className={`ml-auto w-48 h-24`}>
+		  <FanAlArd className="w-48 h-24"
+		  syle={{
+			color: `${theme.hex.accentPrimary}`
+		  }}/>
+		  </div>
+		  </span>
+		  <br />
                   <span className={theme.colors.textGradient}>
                     Art & Architecture
                   </span>
@@ -144,26 +210,24 @@ const ParallaxView: React.FC = () => {
         <section 
             className={slideClass}
             data-index="2"
-            ref={el => (sectionRefs.current[2] = el)}
+            ref={el => {sectionRefs.current[2] = el}}
         >
             <div className="container mx-auto px-6 max-w-6xl">
-              <div className={`w-full p-8 md:p-12 backdrop-blur-md ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverTertiary}`}>
+              <div>
                 
                 {/* Header */}
-                <span className="items-center inline-flex mb-8"> 
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${theme.badges.iconContainerTertiary}`}>
-                      <Hourglass className="w-6 h-6" />
-                    </div>
-                    <h2 className={`ml-4 text-3xl font-bold ${theme.colors.textPrimary}`}>Historical Timeline</h2>
+                <span className="mt-24 items-center inline-flex mb-8"> 
+                    <Hourglass className={`w-14 h-14 ${theme.colors.accentPrimary}`} />
+                    <h2 className={`ml-4 text-6xl font-bold ${theme.colors.textGradientSecondary}`}>Historical Timeline</h2>
                 </span>
 
                 {/* Description */}
-                <p className={`${theme.colors.textSecondary} text-lg leading-relaxed mb-12`}>
+                <p className={`${theme.colors.textSecondary} text-lg leading-relaxed mb-4`}>
                    Drag the artifact scanner to explore different eras of Ancient Egypt.
                 </p>
 
                 {/* --- THE INTERACTIVE SLIDER --- */}
-                <div className="mb-8 px-4">
+                <div className="px-4 mb-4">
                     <TimelineMagnifier 
                         eras={eras} 
                         onChange={(index) => setSelectedEraIndex(index)}
@@ -171,16 +235,21 @@ const ParallaxView: React.FC = () => {
                 </div>
 
                 {/* Dynamic Content Display based on selection */}
-                <div className={`mt-8 p-6 rounded-lg ${theme.colors.bgStandard} border ${theme.colors.borderSubtle} transition-all duration-500`}>
+		<span className='inline-flex w-full items-center'>
+                <div className={`h-fit w-100 p-2 mb-10 md:p-8 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
                     <h3 className={`text-xl font-bold ${theme.colors.accentPrimary} mb-2`}>
                         {eras[selectedEraIndex]}
                     </h3>
                     <p className={`${theme.colors.textSecondary}`}>
-                        {selectedEraIndex === 0 && "The age of the great pyramids and the establishment of pharaonic traditions."}
-                        {selectedEraIndex === 1 && "The golden age of empire, Tutankhamun, and Ramses the Great."}
-                        {selectedEraIndex === 2 && "The fusion of Egyptian traditions with Greek and Roman artistry."}
+		    {`${currentData.description}`}
                     </p>
                 </div>
+		<Carousel3D 
+			key={selectedEraIndex} 
+                        items={currentData.slides} 
+                        height="340px"
+		/>
+		</span>
 
               </div>
             </div>
@@ -190,7 +259,7 @@ const ParallaxView: React.FC = () => {
         <section 
             className={slideClass}
             data-index="3"
-            ref={el => (sectionRefs.current[3] = el)}
+            ref={el => {sectionRefs.current[3] = el}}
         >
             <div className="container mx-auto px-6 max-w-6xl">
               <div className={`
@@ -213,7 +282,7 @@ const ParallaxView: React.FC = () => {
         </section>
 
         {/* --- SPACERS --- */}
-        <section className={`${slideClass} h-[50vh]`} data-index="4" ref={el => (sectionRefs.current[4] = el)}>
+        <section className={`${slideClass} h-[50vh]`} data-index="4" ref={el => {sectionRefs.current[4] = el}}>
            <p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
         </section>
 

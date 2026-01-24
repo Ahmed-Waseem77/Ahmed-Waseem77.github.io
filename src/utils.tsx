@@ -22,3 +22,8 @@ export const generateStars = (count: number, size: number = 0, blur: number = 0)
   }
   return shadow;
 };
+
+// This tells Vite: "Look relative to THIS file, go up one level, into assets, and find the file"
+export const getAssetUrl = (filename: string) => {
+  return new URL(`./assets/${filename}`, import.meta.url).href;
+};

@@ -1,5 +1,4 @@
 import React from 'react';
-import theme from '../theme';
 import { useTheme } from '../ThemeContext'; 
 
 interface FadingGridProps {

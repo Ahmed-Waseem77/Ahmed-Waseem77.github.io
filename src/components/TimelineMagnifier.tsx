@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, GripHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowDown } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
 
 interface TimelineMagnifierProps {
-  eras: string[];
+  eras: string[]; // Pass in your array of 6 eras here
   onChange: (index: number) => void;
 }
 
@@ -13,19 +13,28 @@ const TimelineMagnifier: React.FC<TimelineMagnifierProps> = ({ eras, onChange })
   
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [positionPercent, setPositionPercent] = useState(0); // 0 to 100
+  const [positionPercent, setPositionPercent] = useState(0); 
 
-  // Handle snapping logic
+  // Dynamically calculate snap points based on the number of eras
+  // For 6 eras, steps will be: 0, 20, 40, 60, 80, 100
+  const step = 100 / (Math.max(1, eras.length - 1));
+  
   const handleSnap = (currentPercent: number) => {
-    const snapPoints = [0, 50, 100];
+    // Generate snap points dynamically
+    const snapPoints = eras.map((_, i) => i * step);
+    
+    // Find closest snap point
     const closest = snapPoints.reduce((prev, curr) => {
       return (Math.abs(curr - currentPercent) < Math.abs(prev - currentPercent) ? curr : prev);
     });
 
     setPositionPercent(closest);
     
-    const newIndex = snapPoints.indexOf(closest);
-    if (newIndex !== -1 && newIndex !== activeIndex) {
+    // Calculate index from the snap point
+    // We round to handle floating point imprecision (e.g. 19.99999)
+    const newIndex = Math.round(closest / step);
+    
+    if (newIndex !== activeIndex && newIndex >= 0 && newIndex < eras.length) {
         setActiveIndex(newIndex);
         onChange(newIndex);
     }
@@ -68,49 +77,44 @@ const TimelineMagnifier: React.FC<TimelineMagnifierProps> = ({ eras, onChange })
 
 
   return (
-    <div className="w-full max-w-lg mx-auto py-12 select-none">
+    <div className="w-full max-w-2xl mx-auto py-16 select-none relative">
         {/* --- TRACK --- */}
         <div 
             ref={trackRef}
-            className={`relative h-1.5 rounded-full w-full flex items-center justify-between ${theme.colors.borderSubtle} bg-black/20`}
+            className={`relative h-1 rounded-full w-full flex items-center ${theme.colors.borderSubtle} bg-black/20`}
             onTouchStart={handlePointerDown}
             onTouchMove={handlePointerMove}
-            onMouseDown={handlePointerDown}
+            onPointerDown={handlePointerDown}
             onMouseMove={handlePointerMove}
         >
             {/* --- ERA CIRCLES --- */}
             {eras.map((era, index) => {
                 const isActive = index === activeIndex;
-                
-                // Alignment Logic
-                let alignmentStyle: React.CSSProperties = {};
-                if (index === 0) alignmentStyle = { left: '0%' };
-                else if (index === 1) alignmentStyle = { left: '50%', transform: 'translateX(-50%)' };
-                else alignmentStyle = { right: '0%' };
+                const leftPos = `${index * step}%`;
 
                 return (
                     <div 
                         key={index} 
                         className="absolute flex flex-col items-center pointer-events-none"
-                        style={alignmentStyle}
+                        style={{ left: leftPos, transform: 'translateX(-50%)' }}
                     >
                         {/* The Dot on the line */}
                         <div 
-                            className={`w-3 h-3 rounded-full transition-all duration-300 z-10
-                            ${!isActive ? 'bg-white/20' : ''}`}
+                            className={`w-2 h-2 rounded-full transition-all duration-300 z-10
+                            ${!isActive ? 'bg-white/30' : ''}`}
                             style={isActive ? { 
                                 backgroundColor: theme.hex.accentPrimary,
-                                boxShadow: `0 0 10px ${theme.hex.accentPrimary}80`, // Adding 80 for alpha
-                                transform: 'scale(1.25)'
+                                boxShadow: `0 0 10px ${theme.hex.accentPrimary}`, 
+                                transform: 'scale(1.5)'
                             } : {}}
                         />
                         
                         {/* Label below the dot */}
                         <span 
-                            className={`absolute top-10 text-xs font-bold tracking-widest uppercase w-32 text-center transition-all duration-300
+                            className={`absolute top-6 text-[10px] font-bold tracking-widest uppercase w-24 text-center transition-all duration-300
                             ${isActive 
                                 ? `opacity-100 transform translate-y-0 ${theme.colors.accentPrimary}` 
-                                : `opacity-50 transform -translate-y-1 ${theme.colors.textMuted}`
+                                : `opacity-40 transform -translate-y-1 ${theme.colors.textMuted}`
                             }
                         `}>
                             {era}
@@ -121,58 +125,54 @@ const TimelineMagnifier: React.FC<TimelineMagnifierProps> = ({ eras, onChange })
 
             {/* --- PILL DRAGGABLE HANDLE --- */}
             <div 
-                className="absolute top-1/2 -translate-y-1/2 z-20 cursor-grab active:cursor-grabbing touch-none"
+                className="absolute -top-10 z-20 cursor-grab active:cursor-grabbing touch-none"
                 style={{ 
                     left: `${positionPercent}%`,
                     transition: isDragging ? 'none' : 'left 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                 }}
-                onMouseDown={handlePointerDown}
+                onPointerDown={handlePointerDown}
                 onTouchStart={handlePointerDown}
             >
                 {/* Visual Container centered on the point */}
                 <div className="relative -translate-x-1/2 group">
                     
-                    {/* The Pill Shape */}
+                    {/* The Sleek Pill Shape */}
                     <div 
                         className={`
-                            h-10 px-5 rounded-full 
-                            flex items-center gap-2
-                            border transition-all duration-200 shadow-xl
+                            h-7 px-3 rounded-full 
+                            flex items-center gap-1.5
+                            border transition-all duration-200 shadow-lg backdrop-blur-sm
                         `}
                         style={{
-                            borderColor: isDragging ? theme.hex.accentPrimary : 'rgba(255,255,255,0.2)',
-                            backgroundColor: isDragging ? `${theme.hex.bgStandard}` : `${theme.hex.bgStandard}`, // E6 = 90%, 80 = 50% opacity
-                            boxShadow: isDragging ? `0 10px 25px -5px ${theme.hex.accentPrimary}40` : 'none',
-                            transform: isDragging ? 'scale(1.05)' : 'scale(1)'
+                            borderColor: isDragging ? theme.hex.accentPrimary : 'rgba(255,255,255,0.15)',
+                            backgroundColor: isDragging ? `${theme.hex.bgStandard}` : `${theme.hex.bgStandard}`, 
+                            boxShadow: isDragging ? `0 5px 15px -3px ${theme.hex.accentPrimary}30` : '0 4px 6px -1px rgba(0,0,0,0.1)',
+                            transform: isDragging ? 'scale(1.05) translateY(-2px)' : 'scale(1) translateY(0)'
                         }}
                     >
                         {/* Left Chevron */}
                         <ChevronLeft 
-                            size={14} 
-                            // Using standard theme classes for text color
+                            size={12} 
                             className={`transition-colors ${isDragging ? theme.colors.accentPrimary : theme.colors.textMuted}`} 
                         />
 
-                        {/* Center Grip */}
-                        <GripHorizontal 
-                            size={16} 
+                        {/* Center Arrow Down Symbol */}
+                        <ArrowDown 
+                            size={14} 
                             className={`transition-colors ${isDragging ? theme.colors.textPrimary : theme.colors.textSecondary}`} 
                         />
 
                          {/* Right Chevron */}
                          <ChevronRight 
-                            size={14} 
+                            size={12} 
                             className={`transition-colors ${isDragging ? theme.colors.accentPrimary : theme.colors.textMuted}`} 
                         />
                     </div>
                     
-                    {/* Dynamic Glow effect behind the pill */}
+                    {/* Tiny triangle tip pointing down to the line */}
                     <div 
-                        className={`absolute inset-0 rounded-full z-10 transition-opacity duration-300`}
-                        style={{
-                            backgroundColor: theme.hex.accentPrimary,
-                            opacity: isDragging ? 0.3 : 0
-                        }}
+                        className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] absolute left-1/2 -translate-x-1/2 -bottom-[5px]"
+                        style={{ borderTopColor: isDragging ? theme.hex.accentPrimary : 'rgba(255,255,255,0.15)' }}
                     />
 
                 </div>

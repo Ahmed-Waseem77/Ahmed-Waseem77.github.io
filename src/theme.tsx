@@ -187,7 +187,7 @@ export const gruvboxLight: ThemeType = {
 
     gradientMain: "bg-gradient-to-b from-[#fbf1c7] via-[#ebdbb2] to-[#d5c4a1]",
     textGradient: "text-transparent bg-clip-text bg-gradient-to-r from-[#79740e] to-[#076678]",
-    textGradientSecondary: "text-transparent bg-clip-text bg-gradient-to-r from-[#79740e] to-[#8f371]",
+    textGradientSecondary: "text-transparent bg-clip-text bg-gradient-to-r from-[#79740e] to-[#b16286]",
   },
   hex: {
     bgMain: "#fbf1c7",
