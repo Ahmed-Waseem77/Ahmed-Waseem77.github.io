@@ -72,7 +72,7 @@ const GODS_DATA = [
         name: "Nuut", 
         desc: "Nuut The Sky Goddess, often depicted as a 5 pointed starfish-like star, or a naked woman in the sky covering the earth.",
         component: <Nuut className="w-full h-full" />,
-	extra:  <NuutStar className="w-full h-full"
+	extra:  <NuutStar className="w-full h-full mb-4 mx-4"
 	/>,
 	source: "Figures and Descriptions adapted from (Baines, 2009, p. 209-217)"
     },
@@ -377,7 +377,7 @@ useEffect(() => {
 		   {GODS_DATA[activeGodIndex].extra || undefined}
 		</div>
 		</span>
-                <p className={`${theme.colors.textTertiary} text-sm`}>
+                <p className={`${theme.colors.textMuted} text-sm`}>
 		    {`${GODS_DATA[activeGodIndex].source}`}
                 </p>
             </div>

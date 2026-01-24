@@ -32,7 +32,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -49,7 +48,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -66,7 +64,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -83,7 +80,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -100,7 +96,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -117,7 +112,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -139,7 +133,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -155,7 +148,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -173,7 +165,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -190,7 +181,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -212,7 +202,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -228,7 +217,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -246,7 +234,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -268,7 +255,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -284,7 +270,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -307,7 +292,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -323,7 +307,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
               fill: "currentColor",
               strokeLinecap: "square",
               paintOrder: "stroke fill markers",
-              enableBackground: "accumulate",
               stopColor: "#000",
               stopOpacity: 1,
             }}
@@ -341,7 +324,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -358,7 +340,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -375,7 +356,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -392,7 +372,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -409,7 +388,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
             fill: "currentColor",
             strokeLinecap: "square",
             paintOrder: "stroke fill markers",
-            enableBackground: "accumulate",
             stopColor: "#000",
             stopOpacity: 1,
           }}
@@ -427,7 +405,6 @@ const Nuut = (props: SVGProps<SVGSVGElement>) => (
           fill: "currentColor",
           strokeLinecap: "square",
           paintOrder: "stroke fill markers",
-          enableBackground: "accumulate",
           stopColor: "#000",
           stopOpacity: 1,
         }}
