@@ -79,6 +79,7 @@ export const tokyoDay = {
     
     gradientMain: "bg-gradient-to-b from-[#e1e2e7] via-[#d0d5d9] to-[#a8aecb]",
     textGradient: "text-transparent bg-clip-text bg-gradient-to-r from-[#587539] to-[#007197]",
+    textGradientSecondary: "text-transparent bg-clip-text bg-gradient-to-r from-[#587539] to-[#9854f1]",
   },
   hex: {
     bgMain: "#e1e2e7",
@@ -132,6 +133,7 @@ export const tokyoDark: ThemeType = {
     
     gradientMain: "bg-gradient-to-b from-[#1a1b26] via-[#24283b] to-[#414868]",
     textGradient: "text-transparent bg-clip-text bg-gradient-to-r from-[#9ece6a] to-[#7dcfff]",
+    textGradientSecondary: "text-transparent bg-clip-text bg-gradient-to-r from-[#9ece6a] to-[#bb9af7]",
   },
   hex: {
     bgMain: "#1a1b26",
@@ -185,6 +187,7 @@ export const gruvboxLight: ThemeType = {
 
     gradientMain: "bg-gradient-to-b from-[#fbf1c7] via-[#ebdbb2] to-[#d5c4a1]",
     textGradient: "text-transparent bg-clip-text bg-gradient-to-r from-[#79740e] to-[#076678]",
+    textGradientSecondary: "text-transparent bg-clip-text bg-gradient-to-r from-[#79740e] to-[#8f371]",
   },
   hex: {
     bgMain: "#fbf1c7",
@@ -238,6 +241,7 @@ export const gruvboxDark: ThemeType = {
 
     gradientMain: "bg-gradient-to-b from-[#282828] via-[#32302f] to-[#504945]",
     textGradient: "text-transparent bg-clip-text bg-gradient-to-r from-[#98971a] to-[#458588]",
+    textGradientSecondary: "text-transparent bg-clip-text bg-gradient-to-r from-[#98971a] to-[#b16286]",
   },
   hex: {
     bgMain: "#282828",

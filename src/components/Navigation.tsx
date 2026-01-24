@@ -1,5 +1,6 @@
 import { X, Amphora, Home, Info, Menu, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../ThemeContext'; 
+import FanAlArd from '../assets/FanAlArd';
 import AncientEgyptSwatches from './AncientEgyptSwatches';
 
 const Navigation: React.FC<NavigationProps> = ({ activePage, setActivePage, isMobileMenuOpen, setIsMobileMenuOpen }) => {
@@ -10,10 +11,23 @@ const Navigation: React.FC<NavigationProps> = ({ activePage, setActivePage, isMo
     <nav className={`fixed top-0 left-0 w-full h-16 ${theme.colors.bgNav} backdrop-blur-md border-b ${theme.colors.borderSubtle} z-50 flex items-center justify-between px-6 transition-all duration-300`}>
       
       {/* Brand */}
-      <div className={`flex items-center gap-2 ${theme.colors.accentTertiary} font-bold text-xl tracking-tighter cursor-pointer`} onClick={() => setActivePage('home')}>
-        <Amphora className="w-6 h-6" />
-        <span>Fan Al<span className={theme.colors.textPrimary}> Ard</span></span>
-      </div>
+      <div className={`flex items-start gap-2 ${theme.colors.accentTertiary} font-bold text-xl tracking-tighter cursor-pointer`} onClick={() => setActivePage('home')}>
+      <span className="inline-flex items-end h-10">
+        <FanAlArd 
+	className="w-20 h-10" 
+	style={{
+		color:`${theme.hex.accentPrimary}`
+	}} />
+        </span>
+	{/* <div 
+	     className={`ml-4 px-3 dm-mono-medium text-sm`}
+	     style={{ backgroundColor: theme.hex.accentPrimary,
+	   color: theme.hex.bgMain
+	     }}
+	   >
+	     FAN AL ARD
+	   </div> */}
+      </div> 
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-8">

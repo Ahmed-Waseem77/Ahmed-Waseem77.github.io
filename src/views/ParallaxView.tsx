@@ -2,9 +2,10 @@ import ParallaxLayer from '../components/ParallaxLayer';
 import BackgroundLayer2 from '../components/BackgroundLayer2';
 import BackgroundLayer3 from '../components/BackgroundLayer3';
 import DynamicBackground from '../components/DynamicBackground';
+import TimelineMagnifier from '../components/TimelineMagnifier';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Zap, MousePointer2, BadgeQuestionMark } from 'lucide-react';
+import { Zap, Scroll, ChevronDown, Hourglass, BadgeQuestionMark } from 'lucide-react';
 
 import { useTheme } from '../ThemeContext'; 
 import FadingGrid from '../components/FadingGrid';
@@ -17,6 +18,10 @@ const ParallaxView: React.FC = () => {
   
   // 2. Active Slide State
   const [activeSlide, setActiveSlide] = useState<number>(0);
+
+  // 3. Timeline Slider State 
+  const [selectedEraIndex, setSelectedEraIndex] = useState<number>(0);
+  const eras = ["Old Kingdom", "New Kingdom", "Greco-Roman"];
 
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -114,7 +119,7 @@ const ParallaxView: React.FC = () => {
                   A journey through Ancient Egypt Art & Architecture across the ancient pharaonic and greco-roman eras.
                 </p>
                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-50">
-                    <MousePointer2 className={`w-6 h-6 ${theme.colors.textMuted}`} />
+                    <ChevronDown className={`w-6 h-6 ${theme.colors.textMuted}`} />
                 </div>
             </div>
             <div className="container mx-auto px-6 max-w-6xl">
@@ -135,21 +140,48 @@ const ParallaxView: React.FC = () => {
         </section>
 
 
-        {/* --- SLIDE 2: RESPONSIVE EVENTS --- */}
+{/* --- SLIDE 2: HISTORICAL TIMELINE (MODIFIED) --- */}
         <section 
             className={slideClass}
             data-index="2"
             ref={el => (sectionRefs.current[2] = el)}
         >
             <div className="container mx-auto px-6 max-w-6xl">
-              <div className={`w-full p-8 md:p-12 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverTertiary}`}>
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${theme.badges.iconContainerTertiary}`}>
-                  <MousePointer2 className="w-6 h-6" />
-                </div>
-                <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} mb-4`}>Responsive Events</h2>
-                <p className={`${theme.colors.textSecondary} text-lg leading-relaxed`}>
-                  The scroll position is tracked via a reference hook and updated using `requestAnimationFrame` for buttery smooth performance.
+              <div className={`w-full p-8 md:p-12 backdrop-blur-md ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverTertiary}`}>
+                
+                {/* Header */}
+                <span className="items-center inline-flex mb-8"> 
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${theme.badges.iconContainerTertiary}`}>
+                      <Hourglass className="w-6 h-6" />
+                    </div>
+                    <h2 className={`ml-4 text-3xl font-bold ${theme.colors.textPrimary}`}>Historical Timeline</h2>
+                </span>
+
+                {/* Description */}
+                <p className={`${theme.colors.textSecondary} text-lg leading-relaxed mb-12`}>
+                   Drag the artifact scanner to explore different eras of Ancient Egypt.
                 </p>
+
+                {/* --- THE INTERACTIVE SLIDER --- */}
+                <div className="mb-8 px-4">
+                    <TimelineMagnifier 
+                        eras={eras} 
+                        onChange={(index) => setSelectedEraIndex(index)}
+                    />
+                </div>
+
+                {/* Dynamic Content Display based on selection */}
+                <div className={`mt-8 p-6 rounded-lg ${theme.colors.bgStandard} border ${theme.colors.borderSubtle} transition-all duration-500`}>
+                    <h3 className={`text-xl font-bold ${theme.colors.accentPrimary} mb-2`}>
+                        {eras[selectedEraIndex]}
+                    </h3>
+                    <p className={`${theme.colors.textSecondary}`}>
+                        {selectedEraIndex === 0 && "The age of the great pyramids and the establishment of pharaonic traditions."}
+                        {selectedEraIndex === 1 && "The golden age of empire, Tutankhamun, and Ramses the Great."}
+                        {selectedEraIndex === 2 && "The fusion of Egyptian traditions with Greek and Roman artistry."}
+                    </p>
+                </div>
+
               </div>
             </div>
         </section>
@@ -161,19 +193,20 @@ const ParallaxView: React.FC = () => {
             ref={el => (sectionRefs.current[3] = el)}
         >
             <div className="container mx-auto px-6 max-w-6xl">
-              {/* FIXED: Removed solid background variable, added bg-black/40 for glass effect */}
               <div className={`
                  backdrop-blur-md 
                  w-full p-8 md:p-12 
 		 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} 
                  ${theme.cards.hoverPrimary}
               `}>
+	      <span className="inline-flex items-center">
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-6 ${theme.badges.iconContainerPrimary}`}>
-                  <Zap className="w-6 h-6" />
+                  <Scroll className="w-6 h-6" />
                 </div>
-                <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} mb-4`}>Performance First</h2>
+                <h2 className={`text-3xl ml-4 font-bold ${theme.colors.textPrimary} mb-4`}>Ancient Egyptian Religion</h2>
+	      </span>
                 <p className={`${theme.colors.textSecondary} text-lg leading-relaxed`}>
-                  Using CSS transforms (translate3d or translateY) ensures that repaints are minimized. The browser compositor handles the movement of layers.
+		  Knowing about ancient Egyptian religion is key to understanding the complex dynamics that fuelled their culture, art & architecture, it is the first step to really understand the social dynamics at play in ancient Egypt.
                 </p>
               </div>
             </div>
