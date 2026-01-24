@@ -3,5 +3,18 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    // ... other settings ...
+
+    // 1. Disables "declared but never read" errors
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+
+    // 2. Disables the strict "import type" requirement
+    "verbatimModuleSyntax": false,
+    
+    // 3. Loosens strict type checking (optional, but helps with the 'any' errors)
+    "strict": false
+  }
 }

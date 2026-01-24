@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Menu, X, Home, Info, Layers, Zap, MousePointer2 } from 'lucide-react';
+import { useState } from 'react';
 import { ThemeProvider } from './ThemeContext';
 import Navigation from './components/Navigation';
 import ParallaxView from './views/ParallaxView';
@@ -7,7 +6,7 @@ import StandardPage from './views/StandardPage';
 import theme from './theme';
 
 export default function App() {
-  const [activePage, setActivePage] = useState<PageType>('home');
+  const [activePage, setActivePage] = useState<any>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   return (

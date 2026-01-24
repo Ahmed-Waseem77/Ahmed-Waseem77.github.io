@@ -24,7 +24,7 @@ const DynamicBackground: React.FC<DynamicBackgroundProps> = ({ scrollTop }) => {
     return { gradientString: gradient, bgHeightPercent: height };
   }, [theme]); 
 
-  const CYCLE_HEIGHT = colorKeys.len * 2000; 
+  const CYCLE_HEIGHT = colorKeys.length * 2000; 
   const scrollProgress = Math.min(100, Math.max(0, (scrollTop / CYCLE_HEIGHT) * 100));
 
   return (
