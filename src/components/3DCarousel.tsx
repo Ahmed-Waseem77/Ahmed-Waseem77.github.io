@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom'; 
+import { createPortal } from 'react-dom';
 import { ChevronLeft, ChevronRight, Info, X, Maximize2 } from 'lucide-react';
-import { useTheme } from '../ThemeContext'; 
+import { useTheme } from '../ThemeContext';
 
 interface CarouselItem {
   id: string | number;
@@ -14,12 +14,18 @@ interface CarouselProps {
   items: CarouselItem[];
   height?: string;
   autoPlay?: boolean;
+  // New props for controlling size
+  cardWidth?: string;  // e.g. "w-[60%] md:w-[45%]" or "w-[300px]"
+  cardHeight?: string; // e.g. "aspect-[3/4]" or "h-[400px]"
 }
 
 const Carousel3D: React.FC<CarouselProps> = ({ 
   items, 
   height = "350px", 
-  autoPlay = false 
+  autoPlay = false,
+  // Default values matching your previous hardcoded styles
+  cardWidth = "w-[50%] md:w-[35%]",
+  cardHeight = "aspect-[3/4]"
 }) => {
   const { theme } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -149,7 +155,8 @@ const Carousel3D: React.FC<CarouselProps> = ({
             return (
               <div 
                 key={item.id}
-                className="relative w-[60%] md:w-[45%] aspect-[3/4] md:aspect-video rounded-2xl shadow-2xl group transition-all"
+                // --- MODIFIED HERE: Using props for width and height ---
+                className={`relative ${cardWidth} ${cardHeight} rounded-2xl shadow-2xl group transition-all`}
                 style={styles}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -196,7 +203,6 @@ const Carousel3D: React.FC<CarouselProps> = ({
       </div>
 
       {/* --- EXPANDED OVERLAY (PORTAL) --- */}
-      {/* This pushes the modal to document.body, escaping all z-index/transform issues */}
       {isExpanded && typeof document !== 'undefined' && createPortal(
         <div 
             className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 animate-in fade-in duration-300"
@@ -209,10 +215,10 @@ const Carousel3D: React.FC<CarouselProps> = ({
                 className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-50"
             >
                 <X size={32}
-		   style={{
-			color: theme.colors.textPrimary
-		   }}
-		/>
+            style={{
+             color: theme.colors.textPrimary
+            }}
+        />
             </button>
 
             {/* Main Content Wrapper */}
@@ -231,10 +237,10 @@ const Carousel3D: React.FC<CarouselProps> = ({
                 <div className={`mt-6 w-full ${theme.colors.bgMain} backdrop-blur-md p-6 rounded-xl max-w-2xl text-center shadow-xl`}>
                     <div className={`flex items-center justify-center gap-2 mb-2 text-sky-400`}>
                         <Info size={18} 
-				style={{
-				color: theme.hex.textHighlight
-				}}
-			/>
+                style={{
+                color: theme.hex.textHighlight
+                }}
+            />
                         <span className={`text-xs ${theme.colors.accentPrimary} font-bold uppercase tracking-widest`}>Info</span>
                     </div>
                     <p className={`${theme.colors.textHighlight} text-lg font-light leading-relaxed`}>

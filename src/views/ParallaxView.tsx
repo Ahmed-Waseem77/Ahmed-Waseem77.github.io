@@ -3,6 +3,8 @@ import BackgroundLayer2 from '../components/BackgroundLayer2';
 import BackgroundLayer3 from '../components/BackgroundLayer3';
 import DynamicBackground from '../components/DynamicBackground';
 import TimelineMagnifier from '../components/TimelineMagnifier';
+import ExpandableImage from '../components/ExpandableImage';
+import Hover3DModel from '../components/Hover3DModel';
 import Carousel3D from '../components/3DCarousel';
 import FanAlArd from '../assets/FanAlArd';
 import NuutStar from '../assets/NuutStar';
@@ -13,7 +15,7 @@ import Sobek from '../assets/BodySobek';
 import Nuut from '../assets/BodyNuut';
 import Bastet from '../assets/BodyBastet';
 import Horus from '../assets/BodyHorus';
-import SVGCarousel from '../components/SVGCarousel'; // <--- Import New Carousel
+import SVGCarousel from '../components/SVGCarousel'; 
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Zap, Info, Scroll, ChevronDown, Hourglass, BadgeQuestionMark } from 'lucide-react';
@@ -132,7 +134,7 @@ useEffect(() => {
     if (activeSlide === 3) {
       setTheme('tokyo-dark'); // Or 'tokyo-day' / 'gruvbox-light' based on preference
     }  
-    if (activeSlide === 2) {
+    if (activeSlide === 2 || activeSlide === 4) {
       setTheme('gruvbox-dark'); // Or 'tokyo-day' / 'gruvbox-light' based on preference
     }  
 }, [activeSlide, setTheme]);
@@ -190,7 +192,7 @@ useEffect(() => {
       
       {/* --- BACKGROUND LAYERS (Z-0) --- */}
       {/* We keep these at z-0 or z-auto so they stay behind the content scroller */}
-      <DynamicBackground scrollTop={scrollTop}/>
+      {/* <DynamicBackground scrollTop={scrollTop}/> */}
 
       <ParallaxLayer speed={0.2} offset={scrollTop} className="pointer-events-none z-0 top-20">
           <BackgroundLayer2 isVisible={activeSlide === 3}/>
@@ -286,7 +288,7 @@ useEffect(() => {
                 </p>
 
                 {/* --- THE INTERACTIVE SLIDER --- */}
-                <div className="px-4 mb-4">
+                <div className="px-4 mb-8">
                     <TimelineMagnifier 
                         eras={eras} 
                         onChange={(index) => setSelectedEraIndex(index)}
@@ -295,7 +297,7 @@ useEffect(() => {
 
                 {/* Dynamic Content Display based on selection */}
 		<span className='inline-flex w-full items-center'>
-                <div className={`h-fit w-100 p-2 mb-10 md:p-8 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+                <div className={`h-fit w-200 p-2 mb-10 md:p-8 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
                     <h3 className={`text-xl font-bold ${theme.colors.accentPrimary} mb-2`}>
                         {eras[selectedEraIndex]}
                     </h3>
@@ -385,10 +387,103 @@ useEffect(() => {
 	    </span>
         </section>
 
-        <section className={`${slideClass} h-[50vh]`} data-index="4" ref={el => {sectionRefs.current[4] = el}}>
-           <p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
-        </section>
+<section className={`${slideClass} h-[50vh]`} data-index="4" ref={el => { sectionRefs.current[4] = el }}>
+  <FadingGrid />
+  <div className="container px-6 max-w-6xl mb-8">
+    <h2 className={`ml-4 mt-18 pb-2 text-6xl font-bold ${theme.colors.textGradient}`}>Old Kingdom Architecture</h2>
+    <h3 className={`ml-4 pb-2 text-4xl font-bold ${theme.colors.textPrimary}`}>Early Pyramids</h3>
 
+    {/* CHANGE 1: Switched to 'div' and removed 'inline-' for better block layout behavior */}
+    <div className={`flex w-full items-start mt-6`}>
+      
+      {/* CHANGE 2: Changed 'w-full' to 'flex-1'. This allows it to shrink to make room for the right column */}
+      <div className={`flex flex-col flex-1 min-w-0 pr-6`}> 
+        <span className={`inline-flex w-full`}>
+          <Hover3DModel
+            modelSrc={getAssetUrl('ZoserPyramid.stl')}
+            imageSrc={getAssetUrl('Saqqara3DPreview.png')}
+            width="w-full"
+            height="h-[22em]"
+            rotation={[-Math.PI / 2, 0, 0]} mt-4
+          />
+          <div className="container mx-auto max-w-6xl ml-4">
+            <div className={`w-full p-8 md:p-6 mr-4 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+              <p className={`${theme.colors.textSecondary} text-md leading-relaxed`}>
+              <text className={`text-2xl font-bold ${theme.colors.textPrimary}`}>Saqqara Complex </text>
+	       houses the Saqqara Step Pyramid, Hep Sed court, a colonnaded entrance, a mortuary temple and multiple pavillions. The step pyramid is made by first building the Mastaba and adding inclined layered limestone brick. Some Early Pyramids around the complex are False pyramids (Like Pyramid of Titi on the right) which shows a was-on-going development of constructing true pyramids. <br></br>
+	      The Saqqara step pyramid was the first pyramid to be built in ancient Egypt, made for and by King Djoser (Zoser) of the 3rd Dynasty
+	      <p className={`${theme.colors.textMuted} text-xs italic`}>
+ ("Pyramid of Djoser," 2025)
+      </p>
+              </p>
+            </div>
+          </div>
+        </span>
+        <p className={`text-xs italic mt-2 ${theme.colors.textMuted}`}>Saqqarra Pyramid Complex 3D Model, By L.VII.C on 3D Warehouse</p>
+
+        <div className="container mx-auto max-w-6xl mt-4">
+          <div className={`w-full p-8 md:p-6 mr-4 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+            <span className="inline-flex items-center mb-6">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${theme.badges.iconContainerSecondary}`}>
+                <BadgeQuestionMark className="w-6 h-6" />
+              </div>
+              <h2 className={`text-2xl font-bold ${theme.colors.accentSecondary} ml-4`}>Why were Pyramids so Ubiquitous in Ancient Times?</h2>
+            </span>
+            <p className={`${theme.colors.textSecondary} text-md leading-relaxed`}>
+	    	Ancient Native Americans built Pyramid like structures, like we see with the Aztecs and the Mayans. The question really provokes conspiracy theories but the answer might be rather simple. The Pyramid shape is really simple to construct in ancient time if you wanted to build a tall and grand structure <text className={`${theme.colors.textMuted} italic`}>(Dr John Swanson)</text>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column (Scrollable Images) */}
+      {/* Added 'shrink-0' to ensure this column never gets squished by the left column */}
+      <div className="relative h-[530px] flex flex-col shrink-0">
+      <div
+        className="
+          flex flex-col shrink-0
+	  h-full
+	  min-h-0
+          overflow-y-auto           
+          [&::-webkit-scrollbar]:hidden 
+          [-ms-overflow-style:none] 
+          [scrollbar-width:none]
+        "
+      >
+        <ExpandableImage
+          src={getAssetUrl('Saqqara.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 mb-4 rounded-xl flex-shrink-0"
+          caption="Saqqara Pyramid, Saqqara Complex (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('SaqqaraEntrance.jpg')}
+          alt="Saqqara Colonnade Entrance"
+          className="w-60 h-60 mb-4 rounded-xl flex-shrink-0"
+          caption="Saqqara Colonnade Entrance, Saqqara Complex (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('SaqqaraComplexFacade.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 mb-4 rounded-xl flex-shrink-0"
+          caption="Saqqara Complex Entrance (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('TitiPyramid.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 mb-4 rounded-xl flex-shrink-0"
+          caption="Titi Pyramid, Saqqara Complex (FanAlArd, 2026)"
+        />
+      </div>
+
+    <div className="absolute bottom-0 left-0 w-full h-24 pointer-events-none flex items-end justify-center pb-4 rounded-b-xl z-20">
+      <ChevronDown className="w-5 h-5 text-white" />
+    </div>
+    </div>
+
+    </div>
+  </div>
+</section>
         <section className={`${slideClass} h-[50vh]`} data-index="5" ref={el => {sectionRefs.current[5] = el}}>
            <p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
         </section>
