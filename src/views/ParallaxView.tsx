@@ -19,6 +19,8 @@ import OkRelief1 from '../assets/okRelief1';
 import OkRelief2 from '../assets/okRelief2';
 import OkRelief3 from '../assets/okRelief3';
 import SVGCarousel from '../components/SVGCarousel'; 
+import Section9 from '../components/Section9'; 
+import Section11 from '../components/Section11';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Zap, Quote, Info, Scroll, ChevronDown, Hourglass, BadgeQuestionMark } from 'lucide-react';
@@ -90,6 +92,30 @@ const RELIEFS = [
 	},
 ];
 
+
+const SECTION_9_DATA = [
+    { 
+      id: 'nk-1', 
+      src: getAssetUrl('ValleyNobles.jpg'), 
+      tip: "Valley of the Nobles",
+      // ADD THIS FIELD
+      description: "The tombs of the nobles in Thebes reflect the high status of officials in the New Kingdom, featuring detailed scenes of daily life and the afterlife journey." 
+    },
+    { 
+      id: 'nk-2', 
+      src: getAssetUrl('ValleyNobles2.jpg'), 
+      tip: "Agricultural Scenes",
+      description: "Agriculture was the backbone of the Egyptian economy. This scene depicts the harvesting of wheat, overseen by scribes tallying the yield." 
+    },
+    { 
+      id: 'nk-3', 
+      src: getAssetUrl('ValleyNoblesRelief1.jpg'), 
+      tip: "Banquet Scene",
+      description: "New Kingdom art is famous for its sense of movement. Here, musicians and dancers entertain guests at a funerary banquet." 
+    },
+];
+
+// ... existing code
 const GODS_DATA = [
     { 
         name: "Nuut", 
@@ -138,9 +164,13 @@ const GODS_DATA = [
 ];
 
 const ParallaxView: React.FC = () => {
-  const { theme, setTheme } = useTheme();
+
+  const { theme, setTheme, isDarkMode } = useTheme();
 
   const [activeGodIndex, setActiveGodIndex] = useState(0);
+
+  const [activeSection9Index, setActiveSection9Index] = useState(0);
+
   const [activeReliefIndex, setActiveReliefIndex] = useState(0);
 
   const [selectedEraIndex, setSelectedEraIndex] = useState<number>(0);
@@ -153,12 +183,19 @@ const ParallaxView: React.FC = () => {
   // 2. Active Slide State
   const [activeSlide, setActiveSlide] = useState<number>(0);
 useEffect(() => {
-    if (activeSlide === 3) {
+    if (activeSlide === 3  && isDarkMode) {
       setTheme('tokyo-dark'); // Or 'tokyo-day' / 'gruvbox-light' based on preference
     }  
-    if (activeSlide === 2 || activeSlide === 4) {
+    if (activeSlide === 3  && !isDarkMode) {
+      setTheme('tokyo-day'); // Or 'tokyo-day' / 'gruvbox-light' based on preference
+    }  
+    if ((activeSlide === 2 || activeSlide === 4) && isDarkMode) {
       setTheme('gruvbox-dark'); // Or 'tokyo-day' / 'gruvbox-light' based on preference
     }  
+    if ((activeSlide === 2 || activeSlide === 4) && !isDarkMode) {
+      setTheme('gruvbox-light'); // Or 'tokyo-day' / 'gruvbox-light' based on preference
+    }  
+
 }, [activeSlide, setTheme]);
 
 
@@ -703,27 +740,353 @@ useEffect(() => {
       	</div>
 
 	</div>
-        </section>
+</section>
 
 <section className={`${slideClass} h-[50vh]`} data-index="7" ref={el => {sectionRefs.current[7] = el}}>
+  <FadingGrid />
+  <div className="container px-6 max-w-6xl mb-8">
+    <h2 className={`mt-18 pb-2 text-6xl font-bold ${theme.colors.textGradientSecondary}`}>New Kingdom Architecture</h2>
 
-	<div className="container px-6 max-w-6xl mb-8">
-    		<h2 className={`mt-18 pb-2 text-6xl ${theme.colors.textGradient}`}>New Kingdom Architecture</h2>
-		<span className="inline mb-6">
-		</span>
+    {/* CHANGE 1: Switched to 'div' and removed 'inline-' for better block layout behavior */}
+    <div className={`flex w-full items-start mt-6`}>
+      
+      {/* CHANGE 2: Changed 'w-full' to 'flex-1'. This allows it to shrink to make room for the right column */}
+      <div className={`flex flex-col flex-1 min-w-0 pr-6`}> 
+        <span className={`inline-flex w-full`}>
+          <Hover3DModel
+            modelSrc={getAssetUrl('LuxorTemple.stl')}
+            imageSrc={getAssetUrl('LuxorTempleThumb.png')}
+            width="w-full"
+            height="h-[22em]"
+            rotation={[-Math.PI / 2, 0, 0]} mt-4
+          />
+          <div className="container mx-auto max-w-6xl ml-4">
+            <div className={`w-full p-8 md:p-6 mr-4 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+              <p className={`${theme.colors.textSecondary} text-sm leading-relaxed`}>
+              <text className={`text-2xl font-bold ${theme.colors.textPrimary}`}>Luxor Temple </text>
+	       is like many temples of its time, yet way more digestable for tourists than Al-Karnak while still being Impressive. The Temple features heavy use of Temples and sunken relieves on the exterior walls. It joins between Reed-Style columns and Papyrus-Style Columns Symbolizing the unity between lower & upper Egypt <text className={`${theme.colors.textMuted} italic text-xs`}>(Tour Guide, Abanob, 2026)</text>. The Luxor Temple is built with a facade of the entrance, leading into a court, then a colonnade then another open court, then into the sanctuary. It housed two Obelisks on its entrance, but one of them was gifted to the french by Mohamed Ali Pasha.
+              </p>
+            </div>
+          </div>
+        </span>
+        <p className={`text-xs italic mt-2 ${theme.colors.textMuted}`}>Luxor Temple 3D Model, By Egyptian Tourism Authority on 3D Warehouse, cleaned up by FanAlArd</p>
+
+	<div 
+	  className={`
+	    relative                    
+	    mt-12                       
+	    w-full p-8 md:p-6 mr-4 
+	    ${theme.colors.bgCard} 
+	    ${theme.cards.base} 
+	    ${theme.colors.borderSubtle} 
+	    ${theme.cards.hoverPrimary}
+	  `}
+	>
+    {/* Floating Header Span */}
+    <span 
+      className={`
+        absolute                
+        top-0 left-8
+	-translate-y-1/2        
+        inline-flex items-center
+        ${theme.colors.bgMobileMenu}
+	rounded-lg
+        pr-4                          
+	`}
+    >
+        <div className={`relative w-12 h-12 rounded-lg flex items-center justify-center shadow-md ${theme.badges.iconContainerTertiary}`}>
+            <BadgeQuestionMark className="w-6 h-6" />
+        </div>
+        <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} ml-4`}>
+            Coptic Christian Elements in the Temple	
+        </h2>
+	</span>
+	<span className={`inline-flex ${theme.colors.textPrimary} mr-60 mt-2 flex-row`}>
+	Early Christian took refuge in many of the temples we find today, due to roman persecution. You'd find Byzantine paintings that were once covering the restored Ancient Egyptian reliefs and paintings.
+	<ExpandableImage
+          src={getAssetUrl('RemainsOfLuxorTempleMonastery.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 absolute top-8 right-0  h-60 mb-4 rounded-xl flex-shrink-0"
+          caption="The Remaining structures from the Monastery, as well as some of the paintings (FanAlArd, 2026)"
+	/>
+	</span>
 	</div>
+      </div>
+
+      {/* Right Column (Scrollable Images) */}
+      {/* Added 'shrink-0' to ensure this column never gets squished by the left column */}
+      <div className="relative h-[560px] flex flex-col shrink-0">
+      <div
+        className="
+          flex flex-col shrink-0
+	  h-full
+	  min-h-0
+          overflow-y-auto           
+          [&::-webkit-scrollbar]:hidden 
+          [-ms-overflow-style:none] 
+          [scrollbar-width:none]
+        "
+      >
+        <ExpandableImage
+          src={getAssetUrl('LuxorTempleCornice.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+          caption="The Cornice of the Luxor Temple Sanctuary (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('LuxorTempleReedColumn.jpg')}
+          alt="Saqqara Colonnade Entrance"
+          className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+          caption="Reed Columns of The Luxor Temple, They represent Lower Egypt (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('LuxorTempleTut.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+          caption="Tut and his sister statue (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('LuxorTempleRamses.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+          caption="The 2nd Colonnade of Luxor Temple, with a statue of Ramses the 2nd (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('LuxorTempleReedColumn2.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+          caption="Reed Columns of Luxor Temple (FanAlArd, 2026)"
+        />
+      </div>
+
+    <div className="absolute bottom-0 left-0 w-full h-24 pointer-events-none flex items-end justify-center pb-4 rounded-b-xl z-20">
+      <ChevronDown className="w-5 h-5 text-white" />
+    </div>
+    </div>
+
+    </div>
+  </div>
 
 </section>
-
-
-
-
 
 <section className={`${slideClass} h-[50vh]`} data-index="8" ref={el => {sectionRefs.current[8] = el}}>
+<div className="container px-6 max-w-6xl mb-8">
+    <h2 className={`mt-18 pb-2 text-2xl italic ${theme.colors.textGradientSecondary}`}>New Kingdom Architecture</h2>
+    <h3 className={`mb-4 pb-2 text-4xl font-bold ${theme.colors.textPrimary}`}>Hatshepsut Temple (Deir Al Bahari)</h3>
+<span className={`inline-flex flex-col w-full`}>
+<span className={`inline-flex flex-row w-full`}> 
+<Hover3DModel
+	modelSrc={getAssetUrl('QueenHatshepsut3D.stl')}
+	imageSrc={getAssetUrl('QueenHatshepsut3D.png')}
+	width="w-full"
+	height="h-[25em]"
+        rotation={[-Math.PI / 2, 0, 0]} mt-4
+/>
 
-<p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
 
+
+<div className="container ml-4 mx-auto max-w-6xl">
+  <div className={`w-full p-8 md:p-6 mr-4 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+    <p className={`${theme.colors.textSecondary} inline text-md leading-relaxed`}>
+      <text className={`text-2xl font-bold ${theme.colors.textPrimary} `}>Hatshepsut Temple</text> is built by Hatshepsut's second husband, an engineer called senmut as she refused to marry from the royal family. The temple is three stories and is carved into the mountain, beside it was a temple for mentuhotep III but was toppled by an earthquake. Across the temple the reliefs of Hatshepsut have been scratched off and often replaced by thutmose III, as he sought revenge for her imprisonment of him and her Royal 'coup'. Around it are tombs for the workers who worked on the Temple as will as quarters at the base.
+    </p>
+  </div>
+</div>
+
+</span>
+<p className={`text-xs italic mt-2 ${theme.colors.textMuted}`}>Hatshepsut Temple 3D Model, By Mohamed Al-Shahed on 3D Warehouse</p>
+</span>
+
+      <div className="relative mt-4 flex flex-row shrink-0">
+      <div
+        className="
+          flex flex-row shrink-0
+	  w-full
+	  min-w-0
+          overflow-x-auto           
+          [&::-webkit-scrollbar]:hidden 
+          [-ms-overflow-style:none] 
+          [scrollbar-width:none]
+        "
+      >
+        <ExpandableImage
+          src={getAssetUrl('HatshepsutTemple1.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 rounded-xl flex-shrink-0"
+          caption="Hathshepsut Temple (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('HatshepsutWorkersTombs.jpg')}
+          alt="Saqqara Colonnade Entrance"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Worker Tombs beside Hatshepsut's Temple(FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('HatshepsutGodPtah.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Statue of God Ptah, crossed Arms with an Ankh (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('HatshepsutGraniteDoorway.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Granite Doorway to the sanctuary (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('HathorPillar.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Column of Goddess Hathor, Hatshepsut's Face with cow ears ('Pyramidion', 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('HatshepsutView.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="The view on the Egyptian Farmland ontop of the temple ('Pyramidion', 2026)"
+        />
+      </div>
+      </div>
+
+</div>
 </section>
+
+    
+
+<Section9 
+slideClass={slideClass}
+sectionRefs={sectionRefs} />
+
+<section className={`${slideClass} h-[50vh]`} data-index="10" ref={el => {sectionRefs.current[10] = el}}>
+  <FadingGrid />
+  <div className="container px-6 max-w-6xl mb-8">
+    <h2 className={`mt-18 pb-2 text-5xl font-bold ${theme.colors.textGradientSecondary}`}>Greco-Roman Era: Kom Al-Dikka's Architecture</h2>
+
+    <div className={`flex w-full items-start mt-6`}>
+      
+      {/* Left Column: Main Content */}
+      <div className={`flex flex-col flex-1 min-w-0 pr-6`}> 
+        <span className={`inline-flex w-full`}>
+          {/* Main Hero Image replacing the 3D Model slot */}
+          <ExpandableImage
+            src={getAssetUrl('KomAlDikka.jpg')}
+            alt="Overview of Kom Al-Dikka"
+            className="w-full h-[22em] object-cover rounded-xl shadow-lg"
+            caption="Overview of the Kom Al-Dikka Excavation Site (FanAlArd, 2026)"
+          />
+          
+          <div className="container mx-auto max-w-6xl ml-4">
+            <div className={`w-full p-8 md:p-6 mr-4 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+              <p className={`${theme.colors.textSecondary} text-md leading-relaxed`}>
+                <text className={`text-2xl font-bold ${theme.colors.textPrimary}`}>A Space for the People </text>
+                stands in stark contrast to the Pharaonic tradition. While New Kingdom architecture focused on massive temples for gods and secluded palaces for rulers, Kom Al-Dikka represents <span className={`font-bold ${theme.colors.textPrimary}`}>public utility</span>. This was a civic center designed for the citizens of Alexandria, featuring baths, theaters, and walking grounds. It signifies a shift from architecture serving the <span className="italic">Divine Ruler</span> to architecture serving the <span className="italic">Public Good</span>.
+              </p>
+            </div>
+          </div>
+        </span>
+        <p className={`text-xs italic mt-2 ${theme.colors.textMuted}`}>Excavations by the Polish Centre of Mediterranean Archaeology.</p>
+
+        {/* Floating Header Section */}
+        <div 
+          className={`
+            relative                   
+            mt-12                        
+            w-full p-8 md:p-6 mr-4 
+            ${theme.colors.bgCard} 
+            ${theme.cards.base} 
+            ${theme.colors.borderSubtle} 
+            ${theme.cards.hoverPrimary}
+          `}
+        >
+          {/* Floating Header Span */}
+          <span 
+            className={`
+              absolute                 
+              top-0 left-8
+              -translate-y-1/2        
+              inline-flex items-center
+              ${theme.colors.bgMobileMenu}
+              rounded-lg
+              pr-4                           
+            `}
+          >
+            <div className={`relative w-12 h-12 rounded-lg flex items-center justify-center shadow-md ${theme.badges.iconContainerTertiary}`}>
+              <BadgeQuestionMark className="w-6 h-6" />
+            </div>
+            <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} ml-4`}>
+                An Ancient University?    
+            </h2>
+          </span>
+          
+          <span className={`inline-flex ${theme.colors.textPrimary} mr-60 mt-2 flex-row`}>
+            Archaeologists discovered a complex of over 20 auditoria (lecture halls) adjacent to the theater. This suggests that by the late Roman/Byzantine period, this area had evolved into a major academic institution where students gathered, further reinforcing its status as a public hub for knowledge rather than a seat of royal power.
+            <ExpandableImage
+                  src={getAssetUrl('KomAlDikkaLectureHall.jpg')}
+                  alt="Kom Al-Dikka Lecture Halls"
+                  className="w-60 absolute top-8 right-0 h-60 mb-4 rounded-xl flex-shrink-0"
+                  caption="Remains of the Lecture Halls/Auditoria (FanAlArd, 2026)"
+            />
+          </span>
+        </div>
+      </div>
+
+      {/* Right Column (Scrollable Images) */}
+      <div className="relative h-[560px] flex flex-col shrink-0">
+        <div
+          className="
+            flex flex-col shrink-0
+            h-full
+            min-h-0
+            overflow-y-auto            
+            [&::-webkit-scrollbar]:hidden 
+            [-ms-overflow-style:none] 
+            [scrollbar-width:none]
+          "
+        >
+          <ExpandableImage
+            src={getAssetUrl('GreekAmphitheatre.jpg')}
+            alt="The Roman Amphitheatre"
+            className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+            caption="The Roman Amphitheatre, the only one of its kind in Egypt (FanAlArd, 2026)"
+          />
+          <ExpandableImage
+            src={getAssetUrl('WineMakingPottery.jpg')}
+            alt="Site Details"
+            className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+            caption="Wine Making Pottery in Villa of the Birds (FanAlArd, 2026)"
+          />
+          <ExpandableImage
+            src={getAssetUrl('ResidentialQuarters.jpg')}
+            alt="Auditoria Detail"
+            className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+            caption="Stone Quarters used by students and residents (FanAlArd, 2026)"
+          />
+           <ExpandableImage
+            src={getAssetUrl('VillaOfTheBirds.jpg')}
+            alt="Amphitheatre Stairs"
+            className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+            caption="Marble Statue in the middle of The Villa of the Birds (FanAlArd, 2026)"
+          />
+           <ExpandableImage
+            src={getAssetUrl('VillaOfTheBirdsMosaic.jpg')}
+            alt="Amphitheatre Stairs"
+            className="w-60 h-80 mb-4 rounded-xl flex-shrink-0"
+            caption="The Bird Mosaic in the Villa of The Birds (FanAlArd, 2026)"
+          />
+        </div>
+
+        <div className="absolute bottom-0 left-0 w-full h-24 pointer-events-none flex items-end justify-center pb-4 rounded-b-xl z-20">
+          <ChevronDown className="w-5 h-5 text-white" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<Section11
+slideClass={slideClass}
+sectionRefs={sectionRefs} />
 
       </div>
     </div>

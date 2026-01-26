@@ -17,6 +17,7 @@ interface CarouselProps {
   // New props for controlling size
   cardWidth?: string;  // e.g. "w-[60%] md:w-[45%]" or "w-[300px]"
   cardHeight?: string; // e.g. "aspect-[3/4]" or "h-[400px]"
+  onIndexChange?: (index: number) => void;
 }
 
 const Carousel3D: React.FC<CarouselProps> = ({ 
@@ -25,10 +26,17 @@ const Carousel3D: React.FC<CarouselProps> = ({
   autoPlay = false,
   // Default values matching your previous hardcoded styles
   cardWidth = "w-[50%] md:w-[35%]",
-  cardHeight = "aspect-[3/4]"
+  cardHeight = "aspect-[3/4]",
+  onIndexChange
 }) => {
+
   const { theme } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
+  useEffect(() => {
+    if (onIndexChange) {
+      onIndexChange(activeIndex);
+    }
+  }, [activeIndex, onIndexChange]);
   const [isDragging, setIsDragging] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const startX = useRef<number>(0);
