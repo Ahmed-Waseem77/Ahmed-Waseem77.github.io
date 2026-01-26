@@ -67,9 +67,6 @@ const ExpandableImage: React.FC<ExpandableImageProps> = ({
         {caption && (
             <div className={`p-3 border-t border-white/5 shrink-0 relative z-10 ${theme.colors.bgCard}`}>
                 <p className={`${theme.colors.textSecondary} text-sm leading-relaxed break-words`}>
-                   <span className={`${theme.colors.textPrimary} font-semibold mr-2`}>
-                      Figure:
-                   </span>
                    {caption}
                 </p>
             </div>

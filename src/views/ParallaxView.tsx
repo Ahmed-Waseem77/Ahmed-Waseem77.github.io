@@ -15,10 +15,13 @@ import Sobek from '../assets/BodySobek';
 import Nuut from '../assets/BodyNuut';
 import Bastet from '../assets/BodyBastet';
 import Horus from '../assets/BodyHorus';
+import OkRelief1 from '../assets/okRelief1';
+import OkRelief2 from '../assets/okRelief2';
+import OkRelief3 from '../assets/okRelief3';
 import SVGCarousel from '../components/SVGCarousel'; 
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Zap, Info, Scroll, ChevronDown, Hourglass, BadgeQuestionMark } from 'lucide-react';
+import { Zap, Quote, Info, Scroll, ChevronDown, Hourglass, BadgeQuestionMark } from 'lucide-react';
 import { getAssetUrl } from '../utils'
 
 import { useTheme } from '../ThemeContext'; 
@@ -68,6 +71,24 @@ const ERA_DATA: Record<number, { title: string; description: string; slides: any
         ]
     },
 };
+
+const RELIEFS = [
+	{
+		name: "Relief2",
+		desc: "Reliefs and paintings depended heavily on preliminary drawings, which were prepared according to guidelines or from the Middle Kingdom within squared Grids. Grids were also draw over existing works to facilitate Copying. This is a later Grid of 21 squares to a low measuring point to the eye",
+		component: <OkRelief2 className="w-full h-full" />,
+	},
+	{
+		name: "Relief1",
+		desc: "In the early scheme, horizontal guidelines interesected with the vertical median lines of the body, defining proportions ... continued through long processions of figures.",
+		component: <OkRelief1 className="w-full h-full" />,
+	},
+	{
+		name: "Relief3",
+		desc: "An earlier grid based on 18 squares from ground to the hairline.",
+		component: <OkRelief3 className="w-full h-full" />,
+	},
+];
 
 const GODS_DATA = [
     { 
@@ -120,6 +141,7 @@ const ParallaxView: React.FC = () => {
   const { theme, setTheme } = useTheme();
 
   const [activeGodIndex, setActiveGodIndex] = useState(0);
+  const [activeReliefIndex, setActiveReliefIndex] = useState(0);
 
   const [selectedEraIndex, setSelectedEraIndex] = useState<number>(0);
   const eras = ["Old Kingdom 2700 BCE - 2200 BCE", "Middle Kingdom 2000 BCE - 1700 BCE", "New Kingdom 1500 BCE - 1000 BCE", "Persian 525 BCE - 404 BCE" ,"Greco-Roman (Ptolemaic) 235 BCE - 642 BCE" ];
@@ -390,8 +412,8 @@ useEffect(() => {
 <section className={`${slideClass} h-[50vh]`} data-index="4" ref={el => { sectionRefs.current[4] = el }}>
   <FadingGrid />
   <div className="container px-6 max-w-6xl mb-8">
-    <h2 className={`ml-4 mt-18 pb-2 text-6xl font-bold ${theme.colors.textGradient}`}>Old Kingdom Architecture</h2>
-    <h3 className={`ml-4 pb-2 text-4xl font-bold ${theme.colors.textPrimary}`}>Early Pyramids</h3>
+    <h2 className={`mt-18 pb-2 text-6xl font-bold ${theme.colors.textGradient}`}>Old Kingdom Architecture</h2>
+    <h3 className={`pb-2 text-4xl font-bold ${theme.colors.textPrimary}`}>Early Pyramids: Saqqara Necropolis</h3>
 
     {/* CHANGE 1: Switched to 'div' and removed 'inline-' for better block layout behavior */}
     <div className={`flex w-full items-start mt-6`}>
@@ -438,7 +460,7 @@ useEffect(() => {
 
       {/* Right Column (Scrollable Images) */}
       {/* Added 'shrink-0' to ensure this column never gets squished by the left column */}
-      <div className="relative h-[530px] flex flex-col shrink-0">
+      <div className="relative h-[560px] flex flex-col shrink-0">
       <div
         className="
           flex flex-col shrink-0
@@ -469,6 +491,12 @@ useEffect(() => {
           caption="Saqqara Complex Entrance (FanAlArd, 2026)"
         />
         <ExpandableImage
+          src={getAssetUrl('SaqqaraMastaba.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 mb-4 rounded-xl flex-shrink-0"
+          caption="The Mastaba of Saqqara Pyramid (Omar Awad, 2026)"
+        />
+        <ExpandableImage
           src={getAssetUrl('TitiPyramid.jpg')}
           alt="Ancient Artefact"
           className="w-60 h-60 mb-4 rounded-xl flex-shrink-0"
@@ -484,9 +512,218 @@ useEffect(() => {
     </div>
   </div>
 </section>
-        <section className={`${slideClass} h-[50vh]`} data-index="5" ref={el => {sectionRefs.current[5] = el}}>
-           <p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
+
+
+<section className={`${slideClass} h-[50vh]`} data-index="5" ref={el => {sectionRefs.current[5] = el}}>
+<div className="container px-6 max-w-6xl mb-8">
+    <h2 className={`mt-18 pb-2 text-2xl italic ${theme.colors.textGradient}`}>Old Kingdom Architecture</h2>
+    <h3 className={`mb-4 pb-2 text-4xl font-bold ${theme.colors.textPrimary}`}>Early Pyramids: Giza Necropolis</h3>
+<span className={`inline-flex flex-col w-full`}>
+<span className={`inline-flex flex-row w-full`}> 
+<Hover3DModel
+	modelSrc={getAssetUrl('GizaPlateau3D.stl')}
+	imageSrc={getAssetUrl('GizaPlateauThumb.png')}
+	width="w-full"
+	height="h-[25em]"
+        rotation={[-Math.PI / 2, 0, 0]} mt-4
+/>
+
+
+
+<div className="container ml-4 mx-auto max-w-6xl">
+  <div className={`w-full p-8 md:p-6 mr-4 ${theme.colors.bgCard} ${theme.cards.base} ${theme.colors.borderSubtle} ${theme.cards.hoverPrimary}`}>
+    <p className={`${theme.colors.textSecondary} inline text-sm leading-relaxed`}>
+      <text className={`text-2xl font-bold ${theme.colors.textPrimary} `}>Great Pyramids of Giza </text>
+    	Complex Houses our three pyramids, Great Pyramid, Khafre (Khafrae) and Menkawra (Menkaure). The Pyramids were constructed by layering Limestone stonebrick with a smooth Limestone finish on top, on top of the pyramid lied the Pyramidion (see Image below) which is a granite (or electrum covered) little pyramid. 
+		<br></br>These Pyramids are the pinnacle of pyramid design and one of the last pyramids to be built that way as Ancient Egypt developed the lintel, and complex engineering for better structures that can be utilised more efficiently, so Pyramids fell out of fashion. The most intricate pyramid is Menkawra, as it did not prioritise size, and it only contains an underground tomb and mastaba, while other pyramids contain multiple, which were likely used as a fallback if the king dies suddenly during construction, yet there is a lot of debate around that. <text className={`${theme.colors.textMuted} text-sm italic`}>(Baines, 2009) </text>
+    </p>
+  </div>
+</div>
+
+</span>
+<p className={`text-xs italic mt-2 ${theme.colors.textMuted}`}>Giza Necropolis Complex 3D Model, By L.VII.C on 3D Warehouse</p>
+</span>
+
+      <div className="relative mt-4 flex flex-row shrink-0">
+      <div
+        className="
+          flex flex-row shrink-0
+	  w-full
+	  min-w-0
+          overflow-x-auto           
+          [&::-webkit-scrollbar]:hidden 
+          [-ms-overflow-style:none] 
+          [scrollbar-width:none]
+        "
+      >
+        <ExpandableImage
+          src={getAssetUrl('GizaKhafrae.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 rounded-xl flex-shrink-0"
+          caption="Khafrae Pyramid, Giza Necropolis Complex (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('GizaMenkawra.jpg')}
+          alt="Saqqara Colonnade Entrance"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Menkawra Pyramid, Giza Necropolis Complex (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('GizaTombOfWorkers.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Tombs Of the Workers of Giza, view from the plateau (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('Sphinx.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Sphinx & Khufu Pyramid, Giza Necropolis Complex (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('PyramidionDahshur.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-60 ml-4 rounded-xl flex-shrink-0"
+          caption="Dahshur Pyramid Pyramidion at Egyptian Museum of Antiquities, Tahrir, Egypt ('Pyramidion', 2026)"
+        />
+      </div>
+      </div>
+
+</div>
+</section>
+
+        <section className={`${slideClass} h-[50vh]`} data-index="6" ref={el => {sectionRefs.current[6] = el}}>
+	<div className="container px-6 max-w-6xl mb-8">
+    		<h2 className={`mt-18 pb-2 text-6xl ${theme.colors.textGradient}`}>Old & Middle Kingdom Art</h2>
+        <span className="inline mb-6">
+<p className={`${theme.colors.textPrimary}`}> 
+	    <text className={`text-3xl font-bold ${theme.colors.textPrimary}`}>Ancient Egyptian Reliefs </text> were inspired by daily Egyptian life, it does not care about science or prespective rather it cares about representation and understanding, yet for the modern man it is easy to be misled by the pitfalls of presentism by misidentifying some objects in the reliefs <text className={`text-sm ${theme.colors.textMuted} italic`}> (Baines, 2009, p.50-57) </text>. Indoor Reliefs are often raised (embossed) and Outdoor reliefs are often sunked (engraved) into the rock. </p>
+	</span>
+    <div className="w-full relative mt-4 flex flex-row shrink-0">
+            <div className="mt-18 w-full md:w-4/5 mr-auto">
+                <SVGCarousel 
+                    items={RELIEFS.map(g => g.component)}
+                    onIndexChange={setActiveReliefIndex}
+                    height="380px"
+		    svgScale={3}
+		    svgColor={theme.hex.textPrimary}
+		    cardBackgroundClass="bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/10 via-black/40 to-black/90"
+                />
+            </div>
+      <span className="w-full min-w-0 h-full flex flex-col"> 
+      <div
+        className="
+          flex flex-row shrink-0
+	  w-full
+	  min-w-0
+          overflow-x-auto           
+          [&::-webkit-scrollbar]:hidden 
+          [-ms-overflow-style:none] 
+          [scrollbar-width:none]
+        "
+      >
+        <ExpandableImage
+          src={getAssetUrl('MererukaTempleReliefs.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-70 mr-4 rounded-xl flex-shrink-0"
+          caption="Mereruka Temple Reliefs, Saqqara Complex (Omar Awad, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('MererukaTempleReliefs2.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-70 mr-4 rounded-xl flex-shrink-0"
+          caption="Mereruka Temple Reliefs, Saqqara Complex (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('MererukaTempleReliefs3.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-70 mr-4 rounded-xl flex-shrink-0"
+          caption="Supposed Daughter/Wife of Mereruka Holding a Lotus Flower in one hand, and her fathers leg in the other, she is presumably making perfumes, Mereruka Temple (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('TitiPyramidTexts.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-70 mr-4 rounded-xl flex-shrink-0"
+          caption="Titi Pyramid Texts, Early form of Tomb Spirituality and craftsmanship (FanAlArd, 2026)"
+        />
+        <ExpandableImage
+          src={getAssetUrl('PtahotepReliefs.jpg')}
+          alt="Ancient Artefact"
+          className="w-60 h-70 mr-4 rounded-xl flex-shrink-0"
+          caption="Ptahotep Temple reliefs, showing Men herding Gazelles (3rd Register from top) and Wrestling (1st Register) (FanAlArd, 2026)"
+        />
+      </div>
+
+<div 
+  className={`
+    relative                    /* 1. Necessary for absolute positioning context */
+    mt-12                       /* 2. Push down to make room for the floating header */
+    w-full p-8 md:p-6 mr-4 
+    ${theme.colors.bgCard} 
+    ${theme.cards.base} 
+    ${theme.colors.borderSubtle} 
+    ${theme.cards.hoverPrimary}
+  `}
+>
+    {/* Floating Header Span */}
+    <span 
+      className={`
+        absolute                
+        top-0 left-8
+	-translate-y-1/2        
+        inline-flex items-center
+        ${theme.colors.bgMobileMenu}
+	rounded-lg
+        pr-4                          
+	`}
+    >
+        <div className={`w-12 h-12 rounded-lg flex items-center justify-center shadow-md ${theme.badges.iconContainerPrimary}`}>
+            <Quote className="w-6 h-6" />
+        </div>
+        <h2 className={`text-3xl font-bold ${theme.colors.textPrimary} ml-4`}>
+            Relief Production
+        </h2>
+    </span>
+    <div className={`mt-4 ${theme.colors.textPrimary}`}>
+        {RELIEFS[activeReliefIndex].desc} <text className={`text-sm ${theme.colors.textMuted}`}> (Baines, 2009 p.57-61) </text>
+    </div>
+    <div className={`shadow-md italic inline-flex w-full p-4 md:p-4 mt-4 ${theme.cards.base} ${theme.colors.borderSubtle}`}
+	style={{
+	backgroundColor: `${theme.hex.accentSecondary}1A`,
+	color: theme.hex.accentSecondary
+	}}
+    >
+    <Zap className="mr-4"/>
+    This bears quite a resemblance to the modern way some Artists start their hand-drawings!
+    </div>
+</div>
+
+
+	</span>
+      	</div>
+
+	</div>
         </section>
+
+<section className={`${slideClass} h-[50vh]`} data-index="7" ref={el => {sectionRefs.current[7] = el}}>
+
+	<div className="container px-6 max-w-6xl mb-8">
+    		<h2 className={`mt-18 pb-2 text-6xl ${theme.colors.textGradient}`}>New Kingdom Architecture</h2>
+		<span className="inline mb-6">
+		</span>
+	</div>
+
+</section>
+
+
+
+
+
+<section className={`${slideClass} h-[50vh]`} data-index="8" ref={el => {sectionRefs.current[8] = el}}>
+
+<p className={`${theme.colors.textMuted} text-sm`}>End of immersive scroll content</p>
+
+</section>
 
       </div>
     </div>

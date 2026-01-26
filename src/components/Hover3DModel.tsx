@@ -1,6 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, Stage, Html } from '@react-three/drei';
+// @ts-ignore
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { Loader2, Move3d } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
@@ -38,7 +39,7 @@ const CanvasLoader = () => {
   const { theme } = useTheme();
   return (
     <Html center>
-      <div className={`flex flex-col items-center gap-2 ${theme.colors.textAccent}`}>
+      <div className={`flex flex-col items-center gap-2 ${theme.colors.accentPrimary}`}>
         <Loader2 className="animate-spin w-8 h-8" />
         <span className="text-xs font-bold uppercase tracking-wider">Loading...</span>
       </div>
@@ -65,7 +66,7 @@ const Hover3DModel: React.FC<Hover3DModelProps> = ({
     <div 
       className={`relative ${width} ${height} rounded-xl overflow-hidden shadow-2xl border ${theme.colors.borderSubtle} ${theme.colors.bgCard} group`}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => setIsHovered(true)}
     >
       {/* --- 1. STATIC PREVIEW IMAGE --- */}
       <div className={`absolute inset-0 z-10 transition-opacity duration-500 ${isHovered ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
@@ -84,7 +85,7 @@ const Hover3DModel: React.FC<Hover3DModelProps> = ({
       {/* --- 2. 3D CANVAS --- */}
       {isHovered && (
         <div className={`absolute inset-0 z-20 animate-in fade-in duration-700`}
-             style={{ background: `linear-gradient(to bottom, ${theme.hex?.bgMain || '#111'}, ${theme.hex?.bgCard || '#222'})` }}>
+             style={{ background: `linear-gradient(to bottom, ${theme.hex.bgMain || '#111'}, ${theme.hex.bgStandard || '#222'})` }}>
           
           <Canvas shadows dpr={[1, 2]} camera={{ fov: 45 }}>
             <Suspense fallback={<CanvasLoader />}>
